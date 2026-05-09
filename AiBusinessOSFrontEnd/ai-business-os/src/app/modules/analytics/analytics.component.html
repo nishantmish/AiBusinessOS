@@ -1,0 +1,23 @@
+<div class="page-header">
+  <div><div class="page-title"><i class="ti ti-chart-dots-3" style="color:var(--accent2);margin-right:8px;"></i>Analytics Dashboard</div><div class="page-subtitle">Business performance · May 2026</div></div>
+  <div class="page-actions"><button class="btn"><i class="ti ti-calendar"></i> May 2026</button><button class="btn"><i class="ti ti-download"></i> Export PDF</button></div>
+</div>
+<div class="grid-4" style="margin-bottom:18px;">
+  <div class="kpi-card {{ m.color }}" *ngFor="let m of metrics">
+    <div class="kpi-label"><i class="ti {{ m.icon }}"></i> {{ m.label }}</div>
+    <div class="kpi-value">{{ m.value }}</div>
+    <div class="kpi-delta" [class.text-success]="m.up"><i class="ti" [class.ti-arrow-up]="m.up" style="font-size:11px;"></i> {{ m.delta }}</div>
+  </div>
+</div>
+<div class="grid-2" style="margin-bottom:16px;">
+  <div class="card"><div class="card-header"><i class="ti ti-chart-line" style="color:var(--accent2);font-size:16px;"></i><span class="card-title">Revenue vs Target</span><span class="card-subtitle">7 months</span></div><div class="card-body"><div style="height:240px;"><canvas #revenueChart></canvas></div></div></div>
+  <div class="card"><div class="card-header"><i class="ti ti-filter" style="color:var(--amber);font-size:16px;"></i><span class="card-title">Lead Funnel</span><span class="card-subtitle">By stage</span></div><div class="card-body"><div style="height:240px;"><canvas #funnelChart></canvas></div></div></div>
+</div>
+<div class="grid-3-1">
+  <div class="card"><div class="card-header"><i class="ti ti-chart-pie" style="color:var(--cyan);font-size:16px;"></i><span class="card-title">Lead Sources</span></div><div class="card-body"><div style="height:200px;"><canvas #sourceChart></canvas></div></div></div>
+  <div class="card"><div class="card-header"><i class="ti ti-sparkles" style="color:var(--accent2);font-size:16px;"></i><span class="card-title">AI Summary</span></div><div class="card-body" style="padding-top:10px;">
+    <div style="margin-bottom:12px;"><div style="font-size:11px;color:var(--text3);margin-bottom:4px;">Best Channel</div><div style="font-size:14px;font-weight:600;color:var(--green);">WhatsApp (42%)</div></div>
+    <div style="margin-bottom:12px;"><div style="font-size:11px;color:var(--text3);margin-bottom:4px;">Forecast (Jun)</div><div style="font-size:14px;font-weight:600;color:var(--accent2);">₹3.1L</div></div>
+    <div><div style="font-size:11px;color:var(--text3);margin-bottom:4px;">Bottleneck</div><div style="font-size:13px;color:var(--amber);">Proposal → Won (28% drop-off)</div></div>
+  </div></div>
+</div>

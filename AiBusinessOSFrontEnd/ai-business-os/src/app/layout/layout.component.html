@@ -1,0 +1,188 @@
+<div class="shell" [class.collapsed]="sidebarCollapsed()">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon"><i class="ti ti-cpu"></i></div>
+        <div *ngIf="!sidebarCollapsed()">
+          <div class="logo-text">SYSTEM<span>.OS</span></div>
+          <div class="logo-version">v2.1 · Enterprise</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Org Switcher -->
+    <div class="org-switcher" (click)="showOrgMenu.set(!showOrgMenu())" *ngIf="!sidebarCollapsed()">
+      <div class="org-avatar">FZ</div>
+      <div class="org-info">
+        <div class="org-name">{{ data.organization().name }}</div>
+        <div class="org-niche">{{ data.organization().niche }}</div>
+      </div>
+      <span class="badge {{ getPlanBadge() }}" style="font-size:9px; padding: 1px 6px; text-transform: uppercase;">
+        {{ data.organization().plan }}
+      </span>
+    </div>
+
+    <!-- Nav -->
+    <nav class="nav-menu">
+      <div class="nav-section">
+        <div class="nav-label" *ngIf="!sidebarCollapsed()">Navigation</div>
+        <ng-container *ngFor="let item of navItems()">
+          <a class="nav-item" [routerLink]="item.route" routerLinkActive="active"
+             [title]="sidebarCollapsed() ? item.label : ''">
+            <i class="ti {{ item.icon }}"></i>
+            <span *ngIf="!sidebarCollapsed()">{{ item.label }}</span>
+            <span *ngIf="item.badge && !sidebarCollapsed()"
+                  class="nav-badge"
+                  [class.green]="item.badgeColor==='green'"
+                  [class.amber]="item.badgeColor==='amber'">
+              {{ item.badge }}
+            </span>
+          </a>
+        </ng-container>
+      </div>
+    </nav>
+
+    <!-- AI Credits Bar -->
+    <div class="credits-bar" *ngIf="!sidebarCollapsed()">
+      <div class="credits-label">
+        <i class="ti ti-bolt"></i>
+        AI Credits
+        <span class="text-mono" style="margin-left:auto; font-size:10px;">
+          {{ data.organization().aiCreditsUsed }}/{{ data.organization().aiCredits }}
+        </span>
+      </div>
+      <div class="credits-track">
+        <div class="credits-fill"
+             [style.width.%]="(data.organization().aiCreditsUsed / data.organization().aiCredits) * 100">
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer User -->
+    <div class="sidebar-footer">
+      <div class="user-row">
+        <div class="avatar avatar-sm" [style.background]="data.currentUser().avatarColor">
+          {{ data.currentUser().avatar }}
+        </div>
+        <div class="user-info" *ngIf="!sidebarCollapsed()">
+          <div class="user-name">{{ data.currentUser().name }}</div>
+          <div class="user-role">{{ getRoleLabel(data.currentRole()) }}</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" (click)="showRoleSwitcher.set(true)" *ngIf="!sidebarCollapsed()"
+                title="Switch Role (Demo)" style="margin-left:auto; padding:0 6px;">
+          <i class="ti ti-switch-horizontal"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-area">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="topbar-icon" (click)="toggleSidebar()">
+        <i class="ti ti-menu-2"></i>
+      </button>
+
+      <!-- Breadcrumb -->
+      <div class="topbar-brand" *ngIf="sidebarCollapsed()">
+        <div class="logo-icon-sm"><i class="ti ti-cpu"></i></div>
+        <span class="logo-text" style="font-size:13px;">SYSTEM.OS</span>
+      </div>
+
+      <div style="flex:1;"></div>
+
+      <!-- Search -->
+      <div class="topbar-search">
+        <i class="ti ti-search"></i>
+        <input type="text" placeholder="Search leads, invoices, messages..." />
+        <span class="search-kbd">⌘K</span>
+      </div>
+
+      <!-- Actions -->
+      <div class="topbar-actions">
+        <!-- Notification Bell -->
+        <button class="topbar-icon" (click)="showNotifications.set(!showNotifications())">
+          <i class="ti ti-bell"></i>
+          <span class="notif-dot" *ngIf="unreadNotifications() > 0">{{ unreadNotifications() }}</span>
+        </button>
+
+        <!-- Role indicator -->
+        <div class="role-chip badge {{ getRoleBadgeClass(data.currentRole()) }}">
+          <i class="ti ti-shield-check"></i>
+          {{ getRoleLabel(data.currentRole()) }}
+        </div>
+
+        <!-- Avatar -->
+        <div class="avatar avatar-sm" [style.background]="data.currentUser().avatarColor"
+             (click)="showRoleSwitcher.set(true)" style="cursor:pointer;">
+          {{ data.currentUser().avatar }}
+        </div>
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <main class="page-content">
+      <router-outlet />
+    </main>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS PANEL -->
+<div class="notif-overlay" *ngIf="showNotifications()" (click)="showNotifications.set(false)"></div>
+<div class="notif-panel" *ngIf="showNotifications()">
+  <div class="notif-header">
+    <span class="card-title">Notifications</span>
+    <button class="btn btn-ghost btn-sm" (click)="markAllRead()">Mark all read</button>
+    <button class="btn btn-ghost btn-sm" (click)="showNotifications.set(false)">
+      <i class="ti ti-x"></i>
+    </button>
+  </div>
+  <div class="notif-list">
+    <div class="notif-item" *ngFor="let n of data.notifications()" [class.unread]="!n.read">
+      <div class="notif-icon" [class]="'notif-icon-' + n.type">
+        <i class="ti {{ n.icon }}"></i>
+      </div>
+      <div class="notif-content">
+        <div class="notif-title">{{ n.title }}</div>
+        <div class="notif-msg">{{ n.message }}</div>
+        <div class="notif-time">{{ n.createdAt }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ROLE SWITCHER MODAL -->
+<div class="modal-overlay" *ngIf="showRoleSwitcher()" (click)="showRoleSwitcher.set(false)">
+  <div class="modal" style="width:400px;" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <i class="ti ti-switch-horizontal" style="font-size:18px; color:var(--accent2);"></i>
+      <span class="modal-title">Switch Role (Demo Mode)</span>
+      <button class="btn btn-ghost btn-sm" (click)="showRoleSwitcher.set(false)">
+        <i class="ti ti-x"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px; color:var(--text3); margin-bottom:14px;">
+        Switch between roles to test permission-based UI. Each role restricts visible modules and actions.
+      </p>
+      <div class="role-grid">
+        <div class="role-card" *ngFor="let role of allRoles"
+             [class.active]="data.currentRole() === role"
+             (click)="switchRole(role)">
+          <div class="role-card-icon">
+            <i class="ti" [class]="getRoleIcon(role)"></i>
+          </div>
+          <div class="role-card-label">{{ getRoleLabel(role) }}</div>
+          <div class="role-card-modules">
+            {{ getModuleCount(role) }} modules
+          </div>
+          <i class="ti ti-check role-check" *ngIf="data.currentRole() === role"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

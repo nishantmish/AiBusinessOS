@@ -1,0 +1,81 @@
+<div class="page-header">
+  <div><div class="page-title"><i class="ti ti-calendar-stats" style="color:var(--accent2);margin-right:8px;"></i>Attendance Tracker</div><div class="page-subtitle">{{ today }} · {{ data.attendance().filter(a=>a.status==='present').length }} present today</div></div>
+  <div class="page-actions"><button class="btn"><i class="ti ti-download"></i> Export</button><button class="btn btn-primary"><i class="ti ti-plus"></i> Add Record</button></div>
+</div>
+
+<div class="grid-4" style="margin-bottom:18px;">
+  <div class="kpi-card green"><div class="kpi-label"><i class="ti ti-check"></i> Present</div><div class="kpi-value">{{ data.attendance().filter(a=>a.status==='present').length }}</div></div>
+  <div class="kpi-card amber"><div class="kpi-label"><i class="ti ti-clock"></i> Half Day</div><div class="kpi-value">{{ data.attendance().filter(a=>a.status==='half_day').length }}</div></div>
+  <div class="kpi-card red"><div class="kpi-label"><i class="ti ti-x"></i> Absent</div><div class="kpi-value">{{ data.attendance().filter(a=>a.status==='absent').length }}</div></div>
+  <div class="kpi-card blue"><div class="kpi-label"><i class="ti ti-beach"></i> On Leave</div><div class="kpi-value">{{ data.attendance().filter(a=>a.status==='leave').length }}</div></div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <i class="ti ti-calendar" style="color:var(--accent2);font-size:16px;"></i>
+    <span class="card-title">Daily Attendance — {{ today }}</span>
+    <span class="card-subtitle" style="margin-left:auto;">{{ data.attendance().filter(a=>a.status==='present').length }}/{{ data.attendance().length }} present</span>
+  </div>
+  <table class="table">
+    <thead><tr>
+      <th>Employee</th><th>Department</th><th>Check In</th><th>Check Out</th><th>Hours</th><th>Status</th><th>Actions</th>
+    </tr></thead>
+    <tbody>
+      <tr *ngFor="let rec of data.attendance()">
+        <td>
+          <div style="display:flex;align-items:center;gap:9px;">
+            <div class="avatar avatar-sm" [style.background]="rec.avatarColor">{{ getInitials(rec.employeeName) }}</div>
+            <span style="color:var(--text);font-weight:500;">{{ rec.employeeName }}</span>
+          </div>
+        </td>
+        <td>{{ data.employees().find(e=>e.id===rec.employeeId)?.department ?? '—' }}</td>
+        <td class="text-mono" [class.text-success]="rec.checkIn" [class.text-muted]="!rec.checkIn">{{ rec.checkIn || '—' }}</td>
+        <td class="text-mono" [class.text-muted]="!rec.checkOut">{{ rec.checkOut || (rec.checkIn ? 'In office' : '—') }}</td>
+        <td class="text-mono">{{ rec.hours ? rec.hours + 'h' : rec.checkIn ? 'Live' : '—' }}</td>
+        <td>
+          <span class="badge {{ getStatusClass(rec.status) }}">
+            <i class="ti {{ getStatusIcon(rec.status) }}" style="font-size:10px;"></i>
+            {{ rec.status | titlecase }}
+          </span>
+        </td>
+        <td>
+          <div style="display:flex;gap:4px;">
+            <button class="btn btn-sm btn-success" *ngIf="!rec.checkIn && rec.status!=='leave' && rec.status!=='absent'" (click)="checkIn(rec.employeeId)">Check In</button>
+            <button class="btn btn-sm btn-ghost" *ngIf="rec.checkIn && !rec.checkOut" (click)="checkOut(rec.employeeId)">Check Out</button>
+            <button class="btn btn-sm btn-ghost" *ngIf="rec.checkIn && rec.checkOut"><i class="ti ti-eye"></i></button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Weekly heatmap -->
+<div class="card" style="margin-top:16px;">
+  <div class="card-header">
+    <i class="ti ti-calendar-week" style="color:var(--cyan);font-size:16px;"></i>
+    <span class="card-title">Weekly Overview</span>
+  </div>
+  <div class="card-body">
+    <div class="weekly-grid">
+      <div class="week-row" *ngFor="let emp of data.employees()">
+        <div style="display:flex;align-items:center;gap:8px;width:160px;flex-shrink:0;">
+          <div class="avatar avatar-sm" [style.background]="emp.avatarColor">{{ emp.name }}</div>
+          <span style="font-size:12px;color:var(--text2);">{{ emp.name.split(' ')[0] }}</span>
+        </div>
+        <div class="week-days">
+          <div class="day-cell present" title="Monday">M</div>
+          <div class="day-cell present" title="Tuesday">T</div>
+          <div class="day-cell" [class]="emp.attendanceToday" title="Wednesday">W</div>
+          <div class="day-cell present" title="Thursday">T</div>
+          <div class="day-cell present" title="Friday">F</div>
+          <div class="day-cell absent" title="Saturday">S</div>
+          <div class="day-cell absent" title="Sunday">S</div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);font-family:var(--mono);min-width:40px;">
+          {{ emp.status === 'on_leave' ? '4/5' : emp.attendanceToday === 'absent' ? '4/5' : emp.attendanceToday === 'half_day' ? '4.5/5' : '5/5' }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

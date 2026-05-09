@@ -1,0 +1,33 @@
+<div class="page-header">
+  <div><div class="page-title"><i class="ti ti-users-group" style="color:var(--accent2);margin-right:8px;"></i>Team Management</div><div class="page-subtitle">{{ data.employees().length }} staff members</div></div>
+  <div class="page-actions"><button class="btn btn-primary"><i class="ti ti-user-plus"></i> Add Member</button></div>
+</div>
+<div class="grid-4" style="margin-bottom:18px;">
+  <div class="kpi-card green"><div class="kpi-label"><i class="ti ti-user-check"></i> Active</div><div class="kpi-value">{{ data.employees().filter(e=>e.status==='active').length }}</div></div>
+  <div class="kpi-card amber"><div class="kpi-label"><i class="ti ti-user-pause"></i> On Leave</div><div class="kpi-value">{{ data.employees().filter(e=>e.status==='on_leave').length }}</div></div>
+  <div class="kpi-card blue"><div class="kpi-label"><i class="ti ti-building"></i> Departments</div><div class="kpi-value">4</div></div>
+  <div class="kpi-card cyan"><div class="kpi-label"><i class="ti ti-coin"></i> Monthly Payroll</div><div class="kpi-value">₹{{ data.employees().reduce((s,e)=>s+e.salary,0).toLocaleString() }}</div></div>
+</div>
+<div class="team-grid">
+  <div class="team-card" *ngFor="let emp of data.employees()" (click)="selected.set(emp)">
+    <div class="team-card-top">
+      <div class="avatar avatar-lg" [style.background]="emp.avatarColor">{{ emp.name }}</div>
+      <div>
+        <div class="emp-name">{{ emp.name }}</div>
+        <div class="emp-role">{{ emp.role }}</div>
+        <span class="badge {{ getStatusClass(emp.status) }}" style="font-size:9px;margin-top:4px;display:inline-flex;">{{ emp.status | titlecase }}</span>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="emp-details">
+      <div class="emp-detail-row"><i class="ti ti-mail"></i> {{ emp.email }}</div>
+      <div class="emp-detail-row"><i class="ti ti-phone"></i> {{ emp.phone }}</div>
+      <div class="emp-detail-row"><i class="ti ti-building"></i> {{ emp.department }}</div>
+      <div class="emp-detail-row"><i class="ti ti-coin"></i> ₹{{ emp.salary.toLocaleString() }}/mo</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;">
+      <span style="font-size:11px;color:var(--text3);">Today:</span>
+      <span class="badge {{ getAttendanceClass(emp.attendanceToday) }}" style="font-size:9px;">{{ emp.attendanceToday | titlecase }}</span>
+    </div>
+  </div>
+</div>

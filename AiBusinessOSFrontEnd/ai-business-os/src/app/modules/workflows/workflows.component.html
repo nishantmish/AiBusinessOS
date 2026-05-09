@@ -1,0 +1,32 @@
+<div class="page-header">
+  <div><div class="page-title"><i class="ti ti-git-fork" style="color:var(--accent2);margin-right:8px;"></i>Workflow Automation</div><div class="page-subtitle">{{ data.workflows().filter(w=>w.isActive).length }} active workflows</div></div>
+  <div class="page-actions"><button class="btn btn-primary"><i class="ti ti-plus"></i> New Workflow</button></div>
+</div>
+<div class="grid-4" style="margin-bottom:18px;">
+  <div class="kpi-card blue"><div class="kpi-label"><i class="ti ti-git-fork"></i> Total Workflows</div><div class="kpi-value">{{ data.workflows().length }}</div></div>
+  <div class="kpi-card green"><div class="kpi-label"><i class="ti ti-player-play"></i> Active</div><div class="kpi-value">{{ data.workflows().filter(w=>w.isActive).length }}</div></div>
+  <div class="kpi-card amber"><div class="kpi-label"><i class="ti ti-activity"></i> Total Executions</div><div class="kpi-value">{{ data.workflows().reduce((s,w)=>s+w.executions,0) }}</div></div>
+  <div class="kpi-card cyan"><div class="kpi-label"><i class="ti ti-bolt"></i> This Week</div><div class="kpi-value">127</div></div>
+</div>
+<div class="wf-grid">
+  <div class="wf-card" *ngFor="let wf of data.workflows()" [class.inactive]="!wf.isActive">
+    <div class="wf-card-header">
+      <div class="wf-icon-lg"><i class="ti ti-git-fork"></i></div>
+      <div style="flex:1;">
+        <div class="wf-name">{{ wf.name }}</div>
+        <div class="wf-trigger"><span class="badge badge-blue" style="font-size:9px;">{{ wf.trigger }}</span></div>
+      </div>
+      <div class="toggle-switch" [class.on]="wf.isActive" [class.off]="!wf.isActive" (click)="toggle(wf)"></div>
+    </div>
+    <div class="wf-desc">{{ wf.description }}</div>
+    <div class="wf-stats">
+      <span><i class="ti ti-activity" style="font-size:12px;"></i> {{ wf.executions }} runs</span>
+      <span><i class="ti ti-clock" style="font-size:12px;"></i> {{ wf.lastRun }}</span>
+      <span><i class="ti ti-steps" style="font-size:12px;"></i> {{ wf.steps }} steps</span>
+    </div>
+    <div class="wf-card-actions">
+      <button class="btn btn-sm btn-ghost"><i class="ti ti-edit"></i> Edit</button>
+      <button class="btn btn-sm btn-ghost"><i class="ti ti-history"></i> Logs</button>
+    </div>
+  </div>
+</div>

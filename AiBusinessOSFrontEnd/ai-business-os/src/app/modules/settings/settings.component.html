@@ -1,0 +1,191 @@
+<div class="page-header">
+  <div><div class="page-title"><i class="ti ti-settings" style="color:var(--accent2);margin-right:8px;"></i>Settings</div><div class="page-subtitle">Manage your organization, integrations, and preferences</div></div>
+</div>
+
+<div class="settings-shell">
+  <!-- Tabs sidebar -->
+  <div class="settings-nav">
+    <div class="settings-nav-item" *ngFor="let tab of tabs" [class.active]="activeTab()===tab.id" (click)="activeTab.set($any(tab.id))">
+      <i class="ti {{ tab.icon }}"></i> {{ tab.label }}
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="settings-content">
+
+    <!-- ORG -->
+    <ng-container *ngIf="activeTab()==='org'">
+      <div class="settings-section-title">Organization Profile</div>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-body">
+          <div class="grid-2">
+            <div class="form-group"><label class="form-label">Organization Name</label><input class="form-control" [value]="data.organization().name" /></div>
+            <div class="form-group"><label class="form-label">Slug / URL</label><input class="form-control" [value]="data.organization().slug" /></div>
+            <div class="form-group"><label class="form-label">Industry / Niche</label>
+              <select class="form-control"><option selected>{{ data.organization().niche }}</option><option>Clinic</option><option>Real Estate</option><option>Coaching</option><option>Salon</option></select>
+            </div>
+            <div class="form-group"><label class="form-label">Timezone</label><select class="form-control"><option selected>{{ data.organization().timezone }}</option><option>UTC</option></select></div>
+            <div class="form-group"><label class="form-label">Primary Phone</label><input class="form-control" value="+91 98765 00000" /></div>
+            <div class="form-group"><label class="form-label">Business Email</label><input class="form-control" value="hello@fitzoneGym.com" /></div>
+          </div>
+          <div class="form-group"><label class="form-label">Business Address</label><input class="form-control" value="FitZone Gym, Andheri West, Mumbai 400053" /></div>
+          <div style="display:flex;justify-content:flex-end;margin-top:4px;"><button class="btn btn-primary"><i class="ti ti-check"></i> Save Changes</button></div>
+        </div>
+      </div>
+
+      <div class="settings-section-title">Branch Management</div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Branches ({{ data.organization().branches }})</span>
+          <button class="btn btn-sm btn-primary" style="margin-left:auto;"><i class="ti ti-plus"></i> Add Branch</button>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <div class="branch-row" *ngFor="let b of ['Andheri West (Main)','Bandra East','Powai']">
+            <i class="ti ti-building" style="color:var(--accent2);font-size:16px;"></i>
+            <span style="font-size:13px;color:var(--text);flex:1;">{{ b }}</span>
+            <span class="badge badge-green" style="font-size:9px;">Active</span>
+            <button class="btn btn-sm btn-ghost"><i class="ti ti-edit"></i></button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- INTEGRATIONS -->
+    <ng-container *ngIf="activeTab()==='integrations'">
+      <div class="settings-section-title">Connected Services</div>
+      <div class="integrations-grid">
+        <div class="integration-card" *ngFor="let intg of integrations">
+          <div class="intg-header">
+            <div class="intg-icon" [style.background]="intg.color+'22'" [style.color]="intg.color"><i class="ti {{ intg.icon }}"></i></div>
+            <div style="flex:1;">
+              <div class="intg-name">{{ intg.name }}</div>
+              <div class="intg-provider">{{ intg.provider }}</div>
+            </div>
+            <span class="badge" [class.badge-green]="intg.connected" [class.badge-gray]="!intg.connected" style="font-size:9px;">{{ intg.connected ? 'Connected' : 'Not connected' }}</span>
+          </div>
+          <div class="intg-desc">{{ intg.desc }}</div>
+          <button class="btn btn-sm" [class.btn-danger]="intg.connected" [class.btn-primary]="!intg.connected" style="margin-top:8px;width:100%;">
+            <i class="ti" [class.ti-unlink]="intg.connected" [class.ti-plug]="!intg.connected"></i>
+            {{ intg.connected ? 'Disconnect' : 'Connect' }}
+          </button>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- ROLES -->
+    <ng-container *ngIf="activeTab()==='roles'">
+      <div class="settings-section-title">Role-Based Access Control</div>
+      <div class="roles-grid">
+        <div class="role-info-card" *ngFor="let r of rolesInfo">
+          <div class="role-info-header">
+            <span class="badge {{ r.color }}">{{ r.role }}</span>
+            <span style="font-size:11px;color:var(--text3);margin-left:auto;font-family:var(--mono);">{{ r.modules }} modules</span>
+          </div>
+          <div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:8px;">{{ r.desc }}</div>
+          <div style="margin-top:10px;font-size:11px;color:var(--text3);">{{ r.users }} user{{ r.users !== 1 ? 's' : '' }} with this role</div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- BILLING -->
+    <ng-container *ngIf="activeTab()==='billing'">
+      <div class="settings-section-title">Current Plan</div>
+      <div class="billing-plan-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div>
+            <div style="font-size:22px;font-weight:700;color:var(--text);">Growth Plan</div>
+            <div style="font-size:13px;color:var(--text3);">₹8,200/month · Renews June 1, 2026</div>
+          </div>
+          <span class="badge badge-blue" style="font-size:12px;padding:4px 14px;">Active</span>
+        </div>
+        <div class="billing-features">
+          <div class="bf-item"><i class="ti ti-check" style="color:var(--green);"></i> 5 Branches</div>
+          <div class="bf-item"><i class="ti ti-check" style="color:var(--green);"></i> 15 Team Members</div>
+          <div class="bf-item"><i class="ti ti-check" style="color:var(--green);"></i> 5,000 WhatsApp msg/mo</div>
+          <div class="bf-item"><i class="ti ti-check" style="color:var(--green);"></i> Unlimited Leads</div>
+          <div class="bf-item"><i class="ti ti-check" style="color:var(--green);"></i> 2,000 AI Credits/mo</div>
+          <div class="bf-item"><i class="ti ti-check" style="color:var(--green);"></i> Workflow Automation</div>
+          <div class="bf-item"><i class="ti ti-check" style="color:var(--green);"></i> AI Lead Scoring</div>
+          <div class="bf-item"><i class="ti ti-check" style="color:var(--green);"></i> Priority Support</div>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:8px;">
+          <button class="btn btn-primary"><i class="ti ti-arrow-up"></i> Upgrade to Enterprise</button>
+          <button class="btn"><i class="ti ti-download"></i> Download Invoice</button>
+        </div>
+      </div>
+      <div class="settings-section-title" style="margin-top:20px;">AI Credits</div>
+      <div class="card">
+        <div class="card-body">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <div><div style="font-size:22px;font-weight:700;color:var(--accent2);font-family:var(--mono);">1,380 / 2,000</div><div style="font-size:12px;color:var(--text3);">credits used this month</div></div>
+            <button class="btn btn-primary btn-sm"><i class="ti ti-plus"></i> Buy Credits</button>
+          </div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:69%;background:linear-gradient(90deg,var(--accent),var(--cyan));height:8px;border-radius:4px;"></div></div>
+          <div style="font-size:11px;color:var(--text3);margin-top:8px;">620 credits remaining · Resets June 1 · Extra packs: ₹850/1,000 credits</div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- NOTIFICATIONS -->
+    <ng-container *ngIf="activeTab()==='notifications'">
+      <div class="settings-section-title">Notification Preferences</div>
+      <div class="card">
+        <div class="card-body" style="padding:0;">
+          <div class="notif-pref-row" *ngFor="let pref of [
+            {label:'New lead created', in_app:true, whatsapp:true, email:false},
+            {label:'Invoice paid', in_app:true, whatsapp:true, email:true},
+            {label:'Invoice overdue', in_app:true, whatsapp:true, email:true},
+            {label:'WhatsApp message received', in_app:true, whatsapp:false, email:false},
+            {label:'Workflow execution failed', in_app:true, whatsapp:false, email:true},
+            {label:'AI report generated', in_app:true, whatsapp:false, email:false},
+            {label:'Team member added', in_app:true, whatsapp:false, email:true},
+            {label:'Credit limit warning', in_app:true, whatsapp:true, email:true}
+          ]">
+            <span class="notif-label">{{ pref.label }}</span>
+            <div class="notif-channels">
+              <span class="notif-ch" [class.on]="pref.in_app"><i class="ti ti-bell"></i> In-App</span>
+              <span class="notif-ch" [class.on]="pref.whatsapp"><i class="ti ti-brand-whatsapp"></i> WhatsApp</span>
+              <span class="notif-ch" [class.on]="pref.email"><i class="ti ti-mail"></i> Email</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- API -->
+    <ng-container *ngIf="activeTab()==='api'">
+      <div class="settings-section-title">API Keys</div>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-header"><span class="card-title">API Keys</span><button class="btn btn-sm btn-primary" style="margin-left:auto;"><i class="ti ti-plus"></i> Generate Key</button></div>
+        <div class="card-body" style="padding:0;">
+          <div class="api-key-row" *ngFor="let key of apiKeys">
+            <div style="flex:1;">
+              <div style="font-size:13px;font-weight:500;color:var(--text);">{{ key.name }}</div>
+              <div class="api-key-val">{{ key.key }}</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:3px;">Created {{ key.created }} · Last used {{ key.lastUsed }}</div>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-sm btn-ghost"><i class="ti ti-copy"></i></button>
+              <button class="btn btn-sm btn-danger"><i class="ti ti-trash"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="settings-section-title">Webhooks</div>
+      <div class="card">
+        <div class="card-body">
+          <div class="form-group"><label class="form-label">Webhook Endpoint URL</label><input class="form-control" value="https://yourapp.com/webhooks/system-os" /></div>
+          <div class="form-group"><label class="form-label">Events to listen</label>
+            <div class="webhook-events">
+              <label *ngFor="let ev of ['lead.created','lead.updated','invoice.paid','invoice.overdue','conversation.new','workflow.executed']" class="event-checkbox">
+                <input type="checkbox" checked /> {{ ev }}
+              </label>
+            </div>
+          </div>
+          <button class="btn btn-primary"><i class="ti ti-check"></i> Save Webhook</button>
+        </div>
+      </div>
+    </ng-container>
+
+  </div>
+</div>

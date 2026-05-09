@@ -1,0 +1,17 @@
+.filters-bar { display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+.search-box { display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--border2); border-radius:8px; padding:0 12px; height:36px; flex:1; min-width:200px; i { color:var(--text3); font-size:15px; } input { background:none; border:none; color:var(--text); font-family:var(--font); font-size:13px; flex:1; &:focus { outline:none; } &::placeholder { color:var(--text3); } } }
+.stats-chips { display:flex; gap:6px; margin-left:auto; }
+.view-toggle { display:flex; background:var(--surface2); border:1px solid var(--border); border-radius:8px; overflow:hidden; button { background:none; border:none; padding:6px 10px; color:var(--text3); cursor:pointer; font-size:15px; &.active { background:var(--accent-glow); color:var(--accent2); } } }
+.lead-score { font-size:10px; font-family:var(--mono); padding:1px 6px; border-radius:4px; }
+.score-high { background:rgba(34,197,94,0.12); color:var(--green); }
+.score-mid  { background:rgba(245,158,11,0.12); color:var(--amber); }
+.score-low  { background:rgba(239,68,68,0.1); color:var(--red); }
+.kanban-board { display:grid; grid-template-columns:repeat(6,1fr); gap:10px; }
+.kanban-col { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px; }
+.kanban-col-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.pipeline-count { background:var(--surface2); border:1px solid var(--border); color:var(--text2); font-size:10px; padding:1px 6px; border-radius:4px; }
+.kanban-card { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:10px; margin-bottom:6px; cursor:pointer; &:hover { border-color:var(--border2); } }
+.kanban-card-name { font-size:12px; font-weight:500; color:var(--text); margin-bottom:4px; }
+.kanban-card-meta { font-size:11px; color:var(--text3); display:flex; align-items:center; gap:4px; }
+.kanban-add { width:100%; background:none; border:1px dashed var(--border2); border-radius:7px; color:var(--text3); font-size:11px; padding:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; &:hover { border-color:var(--accent); color:var(--accent2); } }
+.detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }

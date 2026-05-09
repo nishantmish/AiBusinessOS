@@ -1,0 +1,202 @@
+<div class="page-header">
+  <div>
+    <div class="page-title">Command Center</div>
+    <div class="page-subtitle">FitZone Gym · Mumbai · May 2026</div>
+  </div>
+  <div class="page-actions">
+    <button class="btn"><i class="ti ti-calendar"></i> May 2026</button>
+    <button class="btn"><i class="ti ti-download"></i> Export</button>
+    <button class="btn btn-primary"><i class="ti ti-plus"></i> New Lead</button>
+  </div>
+</div>
+
+<!-- KPIs -->
+<div class="grid-4" style="margin-bottom:18px;">
+  <div class="kpi-card {{ k.color }}" *ngFor="let k of kpis">
+    <div class="kpi-label"><i class="ti {{ k.icon }}"></i> {{ k.label }}</div>
+    <div class="kpi-value">{{ k.value }}</div>
+    <div class="kpi-delta" [class.text-success]="k.deltaUp" [class.text-muted]="!k.deltaUp">
+      <i class="ti" [class.ti-arrow-up]="k.deltaUp" [class.ti-minus]="!k.deltaUp" style="font-size:11px;"></i>
+      {{ k.delta }} <span class="text-muted" style="margin-left:3px;">{{ k.sub }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Chart + AI Metrics -->
+<div class="grid-3-1" style="margin-bottom:16px;">
+  <div class="card">
+    <div class="card-header">
+      <i class="ti ti-chart-area" style="color:var(--accent2);font-size:16px;"></i>
+      <span class="card-title">Revenue & Lead Trend</span>
+      <span class="card-subtitle">Last 6 months</span>
+      <button class="btn btn-sm" style="margin-left:auto;" routerLink="/analytics">Full Analytics →</button>
+    </div>
+    <div class="card-body">
+      <div style="position:relative;height:210px;">
+        <canvas #revenueChart></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <i class="ti ti-brain" style="color:var(--cyan);font-size:16px;"></i>
+      <span class="card-title">AI Metrics</span>
+    </div>
+    <div class="card-body" style="padding-top:10px;">
+      <div style="margin-bottom:16px;">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">Conversion Rate</div>
+        <div style="font-size:24px;font-weight:600;color:var(--green);font-family:var(--mono);">34.7%</div>
+      </div>
+      <div class="score-bar">
+        <div class="score-bar-label"><span>WhatsApp Opens</span><span class="text-mono">87%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:87%;background:var(--green);"></div></div>
+      </div>
+      <div class="score-bar">
+        <div class="score-bar-label"><span>Response Rate</span><span class="text-mono">71%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:71%;background:var(--accent);"></div></div>
+      </div>
+      <div class="score-bar">
+        <div class="score-bar-label"><span>Invoice Paid</span><span class="text-mono">58%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:58%;background:var(--amber);"></div></div>
+      </div>
+      <div class="score-bar" style="margin-bottom:0;">
+        <div class="score-bar-label"><span>Overdue Risk</span><span class="text-mono">22%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:22%;background:var(--red);"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pipeline -->
+<div class="card" style="margin-bottom:16px;">
+  <div class="card-header">
+    <i class="ti ti-layout-kanban" style="color:var(--accent2);font-size:16px;"></i>
+    <span class="card-title">Lead Pipeline</span>
+    <span class="card-subtitle">{{ data.leads().length }} leads · AI scored</span>
+    <button class="btn btn-sm" style="margin-left:auto;" routerLink="/crm">Open CRM →</button>
+  </div>
+  <div class="card-body">
+    <div class="pipeline-grid">
+      <div class="pipeline-col" *ngFor="let stage of stages.slice(0,5)">
+        <div class="pipeline-col-header">
+          {{ stageLabels[stage] }}
+          <span class="pipeline-count">{{ getLeadsByStage(stage).length }}</span>
+        </div>
+        <div class="lead-card" *ngFor="let lead of getLeadsByStage(stage)"
+             [class.won]="stage==='won'">
+          <div class="lead-name">{{ lead.name }}</div>
+          <div class="lead-meta">
+            <span class="text-muted" style="font-size:10px;">{{ lead.source }}</span>
+            <span class="lead-score {{ getScoreClass(lead.score) }}">{{ lead.score }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom 3 columns -->
+<div style="display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:16px;margin-bottom:16px;">
+  <!-- Inbox -->
+  <div class="card">
+    <div class="card-header">
+      <i class="ti ti-brand-whatsapp" style="color:#25d366;font-size:16px;"></i>
+      <span class="card-title">WhatsApp Inbox</span>
+      <span class="badge badge-blue" style="margin-left:auto;">7 new</span>
+    </div>
+    <div class="card-body" style="padding:0 18px;">
+      <div class="inbox-item" *ngFor="let conv of data.conversations().slice(0,5)">
+        <div class="avatar avatar-sm" [style.background]="conv.avatarColor">
+          {{ getInitials(conv.customerName) }}
+        </div>
+        <div class="inbox-content">
+          <div class="inbox-top">
+            <span class="inbox-name">{{ conv.customerName }}</span>
+            <span class="inbox-time">{{ conv.lastMessageAt }}</span>
+          </div>
+          <div class="inbox-preview">{{ conv.lastMessage }}</div>
+        </div>
+        <div class="unread-badge" *ngIf="conv.unread > 0">{{ conv.unread }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Invoices -->
+  <div class="card">
+    <div class="card-header">
+      <i class="ti ti-file-invoice" style="color:var(--amber);font-size:16px;"></i>
+      <span class="card-title">Recent Invoices</span>
+      <button class="btn btn-sm" style="margin-left:auto;" routerLink="/invoices">View all →</button>
+    </div>
+    <div class="card-body" style="padding:0 18px;">
+      <table class="table">
+        <thead><tr>
+          <th>Customer</th><th>Amount</th><th>Due</th><th>Status</th>
+        </tr></thead>
+        <tbody>
+          <tr *ngFor="let inv of data.invoices().slice(0,6)">
+            <td style="color:var(--text);font-weight:500;">{{ inv.customerName }}</td>
+            <td class="text-mono">₹{{ inv.amount.toLocaleString() }}</td>
+            <td>{{ inv.dueDate.slice(5) }}</td>
+            <td><span class="badge {{ getInvoiceStatusClass(inv.status) }}">{{ inv.status | titlecase }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Activity -->
+  <div class="card">
+    <div class="card-header">
+      <i class="ti ti-activity" style="color:var(--cyan);font-size:16px;"></i>
+      <span class="card-title">Live Activity</span>
+    </div>
+    <div class="card-body" style="padding:0 18px;">
+      <div class="activity-item" *ngFor="let a of activities">
+        <div class="activity-dot dot-{{ a.dot }}"></div>
+        <div>
+          <div class="activity-text" [innerHTML]="a.text"></div>
+          <div class="activity-time">{{ a.time }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI Insights + Workflows -->
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header">
+      <i class="ti ti-sparkles" style="color:var(--accent2);font-size:16px;"></i>
+      <span class="card-title">AI Business Insights</span>
+      <span class="badge badge-blue" style="margin-left:auto;font-size:9px;">Generated 08:00 AM</span>
+    </div>
+    <div class="card-body" style="padding:8px 18px;">
+      <div class="insight-item" *ngFor="let ins of insights">
+        <div class="insight-icon" [class]="'insight-icon-' + ins.type">
+          <i class="ti {{ ins.icon }}"></i>
+        </div>
+        <div class="insight-text" [innerHTML]="ins.text"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <i class="ti ti-git-fork" style="color:var(--accent2);font-size:16px;"></i>
+      <span class="card-title">Active Workflows</span>
+      <button class="btn btn-sm" style="margin-left:auto;" routerLink="/workflows">Builder →</button>
+    </div>
+    <div class="card-body" style="padding:8px 18px;">
+      <div class="wf-item" *ngFor="let wf of data.workflows().slice(0,6)">
+        <div class="wf-icon" [class.inactive]="!wf.isActive"><i class="ti ti-git-fork"></i></div>
+        <div style="flex:1;">
+          <div class="wf-name">{{ wf.name }}</div>
+          <div class="wf-meta">{{ wf.trigger }} · {{ wf.executions }} runs</div>
+        </div>
+        <div class="toggle-switch" [class.on]="wf.isActive" [class.off]="!wf.isActive"></div>
+      </div>
+    </div>
+  </div>
+</div>

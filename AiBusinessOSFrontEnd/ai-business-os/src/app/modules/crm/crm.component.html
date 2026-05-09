@@ -1,0 +1,169 @@
+<div class="page-header">
+  <div>
+    <div class="page-title"><i class="ti ti-users" style="color:var(--accent2);margin-right:8px;"></i>CRM — Lead Management</div>
+    <div class="page-subtitle">{{ filtered().length }} leads · AI-scored pipeline</div>
+  </div>
+  <div class="page-actions">
+    <div class="view-toggle">
+      <button [class.active]="view()==='table'" (click)="view.set('table')"><i class="ti ti-list"></i></button>
+      <button [class.active]="view()==='kanban'" (click)="view.set('kanban')"><i class="ti ti-layout-kanban"></i></button>
+    </div>
+    <button class="btn btn-primary" *ngIf="perms.canCreate('crm')" (click)="showModal.set(true)">
+      <i class="ti ti-plus"></i> Add Lead
+    </button>
+  </div>
+</div>
+
+<!-- Filters -->
+<div class="filters-bar">
+  <div class="search-box">
+    <i class="ti ti-search"></i>
+    <input type="text" placeholder="Search leads..." [value]="search()" (input)="search.set($any($event.target).value)" />
+  </div>
+  <select class="form-control" style="width:140px;" [value]="filterStage()" (change)="filterStage.set($any($event.target).value)">
+    <option value="all">All Stages</option>
+    <option *ngFor="let s of stages" [value]="s">{{ stageLabels[s] }}</option>
+  </select>
+  <select class="form-control" style="width:140px;" [value]="filterSource()" (change)="filterSource.set($any($event.target).value)">
+    <option value="all">All Sources</option>
+    <option *ngFor="let s of sources" [value]="s">{{ s }}</option>
+  </select>
+  <div class="stats-chips">
+    <span class="badge badge-blue">{{ data.leads().filter(l=>l.stage==='new').length }} New</span>
+    <span class="badge badge-amber">{{ data.leads().filter(l=>l.stage==='qualified').length }} Qualified</span>
+    <span class="badge badge-green">{{ data.leads().filter(l=>l.stage==='won').length }} Won</span>
+    <span class="badge badge-red">{{ data.leads().filter(l=>l.stage==='lost').length }} Lost</span>
+  </div>
+</div>
+
+<!-- TABLE VIEW -->
+<div class="card" *ngIf="view()==='table'">
+  <table class="table">
+    <thead><tr>
+      <th>Lead</th><th>Source</th><th>Stage</th><th>Score</th>
+      <th>Owner</th><th>Value</th><th>Created</th><th>Actions</th>
+    </tr></thead>
+    <tbody>
+      <tr *ngFor="let lead of filtered()" (click)="openLead(lead)">
+        <td>
+          <div style="display:flex;align-items:center;gap:9px;">
+            <div class="avatar avatar-sm" style="background:linear-gradient(135deg,var(--accent),var(--cyan));font-size:10px;">
+              {{ lead.name }}
+            </div>
+            <div>
+              <div style="color:var(--text);font-weight:500;font-size:12.5px;">{{ lead.name }}</div>
+              <div style="font-size:11px;color:var(--text3);">{{ lead.email }}</div>
+            </div>
+          </div>
+        </td>
+        <td>
+          <span style="display:flex;align-items:center;gap:5px;">
+            <i class="ti {{ getSourceIcon(lead.source) }}" style="font-size:14px;color:var(--accent2);"></i>
+            {{ lead.source }}
+          </span>
+        </td>
+        <td><span class="badge {{ getStageClass(lead.stage) }}">{{ stageLabels[lead.stage] }}</span></td>
+        <td><span class="lead-score {{ getScoreClass(lead.score) }}">{{ lead.score }}</span></td>
+        <td>{{ lead.owner }}</td>
+        <td class="text-mono">{{ lead.value ? '₹'+lead.value.toLocaleString() : '—' }}</td>
+        <td class="text-muted text-mono" style="font-size:11px;">{{ lead.createdAt }}</td>
+        <td (click)="$event.stopPropagation()">
+          <div style="display:flex;gap:4px;">
+            <button class="btn btn-sm btn-ghost" title="Message"><i class="ti ti-brand-whatsapp" style="color:#25d366;"></i></button>
+            <button class="btn btn-sm btn-ghost" title="Edit" *ngIf="perms.canCreate('crm')"><i class="ti ti-edit"></i></button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- KANBAN VIEW -->
+<div class="kanban-board" *ngIf="view()==='kanban'">
+  <div class="kanban-col" *ngFor="let stage of stages">
+    <div class="kanban-col-header">
+      <span class="badge {{ getStageClass(stage) }}">{{ stageLabels[stage] }}</span>
+      <span class="pipeline-count text-mono">{{ getLeadsByStage(stage).length }}</span>
+    </div>
+    <div class="kanban-card" *ngFor="let lead of getLeadsByStage(stage)" (click)="openLead(lead)">
+      <div class="kanban-card-name">{{ lead.name }}</div>
+      <div class="kanban-card-meta">
+        <i class="ti {{ getSourceIcon(lead.source) }}" style="font-size:12px;color:var(--accent2);"></i>
+        {{ lead.source }}
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+        <span class="text-mono" style="font-size:11px;color:var(--text3);">₹{{ lead.value.toLocaleString() }}</span>
+        <span class="lead-score {{ getScoreClass(lead.score) }}">{{ lead.score }}</span>
+      </div>
+    </div>
+    <button class="kanban-add" *ngIf="perms.canCreate('crm')" (click)="showModal.set(true)">
+      <i class="ti ti-plus"></i> Add
+    </button>
+  </div>
+</div>
+
+<!-- Lead Detail Modal -->
+<div class="modal-overlay" *ngIf="showModal() && selectedLead()" (click)="showModal.set(false);selectedLead.set(null)">
+  <div class="modal" style="width:520px;" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="avatar avatar-md" style="background:linear-gradient(135deg,var(--accent),var(--cyan));">
+        {{ selectedLead()!.name }}
+      </div>
+      <div>
+        <div class="modal-title">{{ selectedLead()!.name }}</div>
+        <span class="badge {{ getStageClass(selectedLead()!.stage) }}">{{ stageLabels[selectedLead()!.stage] }}</span>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="margin-left:auto;" (click)="showModal.set(false);selectedLead.set(null)"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-grid">
+        <div><div class="form-label">Email</div><div>{{ selectedLead()!.email }}</div></div>
+        <div><div class="form-label">Phone</div><div>{{ selectedLead()!.phone }}</div></div>
+        <div><div class="form-label">Source</div><div>{{ selectedLead()!.source }}</div></div>
+        <div><div class="form-label">AI Score</div><div><span class="lead-score {{ getScoreClass(selectedLead()!.score) }}">{{ selectedLead()!.score }}/100</span></div></div>
+        <div><div class="form-label">Owner</div><div>{{ selectedLead()!.owner }}</div></div>
+        <div><div class="form-label">Value</div><div class="text-mono">₹{{ selectedLead()!.value.toLocaleString() }}</div></div>
+      </div>
+      <div style="margin-top:14px;">
+        <div class="form-label">Notes</div>
+        <div style="font-size:13px;color:var(--text2);">{{ selectedLead()!.notes || '—' }}</div>
+      </div>
+      <div style="margin-top:14px;" *ngIf="selectedLead()!.tags.length">
+        <div class="form-label">Tags</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <span class="tag tag-blue" *ngFor="let tag of selectedLead()!.tags">{{ tag }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn"><i class="ti ti-brand-whatsapp" style="color:#25d366;"></i> Message</button>
+      <button class="btn btn-primary"><i class="ti ti-edit"></i> Edit Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Lead Modal -->
+<div class="modal-overlay" *ngIf="showModal() && !selectedLead()" (click)="showModal.set(false)">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <i class="ti ti-user-plus" style="color:var(--accent2);font-size:18px;"></i>
+      <span class="modal-title">Add New Lead</span>
+      <button class="btn btn-ghost btn-sm" style="margin-left:auto;" (click)="showModal.set(false)"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Full Name *</label><input class="form-control" placeholder="Rahul Sharma" [(ngModel)]="newLead.name" /></div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-control" type="email" placeholder="rahul@email.com" [(ngModel)]="newLead.email" /></div>
+      <div class="form-group"><label class="form-label">Phone</label><input class="form-control" placeholder="+91 98001 00000" [(ngModel)]="newLead.phone" /></div>
+      <div class="form-group"><label class="form-label">Source</label>
+        <select class="form-control" [(ngModel)]="newLead.source">
+          <option *ngFor="let s of sources" [value]="s">{{ s }}</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Notes</label><textarea class="form-control" rows="3" placeholder="Initial notes..." [(ngModel)]="newLead.notes"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" (click)="showModal.set(false)">Cancel</button>
+      <button class="btn btn-primary" (click)="addLead()"><i class="ti ti-check"></i> Create Lead</button>
+    </div>
+  </div>
+</div>

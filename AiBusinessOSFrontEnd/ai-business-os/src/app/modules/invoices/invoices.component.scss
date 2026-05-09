@@ -1,0 +1,4 @@
+.inv-filter { display:flex; gap:4px; button { background:none; border:1px solid var(--border); border-radius:6px; padding:4px 12px; font-size:12px; color:var(--text3); cursor:pointer; font-family:var(--font); &.active { background:var(--accent-glow); border-color:var(--accent); color:var(--accent2); } } }
+.inv-detail-header { display:flex; justify-content:space-between; align-items:flex-start; }
+.inv-totals { margin-top:14px; border-top:1px solid var(--border); padding-top:10px; }
+.inv-total-row { display:flex; justify-content:space-between; padding:6px 0; font-size:13px; color:var(--text2); border-bottom:1px solid var(--border); &:last-child { border-bottom:none; } &.total { font-size:15px; font-weight:600; color:var(--text); } }

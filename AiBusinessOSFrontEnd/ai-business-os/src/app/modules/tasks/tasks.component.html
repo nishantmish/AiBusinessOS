@@ -1,0 +1,87 @@
+<div class="page-header">
+  <div>
+    <div class="page-title"><i class="ti ti-checklist" style="color:var(--accent2);margin-right:8px;"></i>Task Management</div>
+    <div class="page-subtitle">{{ data.tasks().filter(t=>t.status!=='done').length }} active tasks</div>
+  </div>
+  <div class="page-actions">
+    <select class="form-control" style="width:130px;" (change)="filterStatus.set($any($event.target).value)">
+      <option value="all">All Status</option>
+      <option *ngFor="let s of statuses" [value]="s">{{ statusLabels[s] }}</option>
+    </select>
+    <select class="form-control" style="width:130px;" (change)="filterPriority.set($any($event.target).value)">
+      <option value="all">All Priority</option>
+      <option *ngFor="let p of priorities" [value]="p">{{ p | titlecase }}</option>
+    </select>
+    <button class="btn btn-primary" *ngIf="perms.canCreate('tasks')" (click)="showModal.set(true)">
+      <i class="ti ti-plus"></i> Add Task
+    </button>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="grid-4" style="margin-bottom:18px;">
+  <div class="kpi-card blue"><div class="kpi-label"><i class="ti ti-circle"></i> To Do</div><div class="kpi-value">{{ data.tasks().filter(t=>t.status==='todo').length }}</div></div>
+  <div class="kpi-card amber"><div class="kpi-label"><i class="ti ti-progress"></i> In Progress</div><div class="kpi-value">{{ data.tasks().filter(t=>t.status==='in_progress').length }}</div></div>
+  <div class="kpi-card green"><div class="kpi-label"><i class="ti ti-check"></i> Done</div><div class="kpi-value">{{ data.tasks().filter(t=>t.status==='done').length }}</div></div>
+  <div class="kpi-card red"><div class="kpi-label"><i class="ti ti-ban"></i> Blocked</div><div class="kpi-value">{{ data.tasks().filter(t=>t.status==='blocked').length }}</div></div>
+</div>
+
+<!-- Kanban -->
+<div class="task-kanban">
+  <div class="task-col" *ngFor="let s of statuses">
+    <div class="task-col-header">
+      <span class="badge {{ getStatusClass(s) }}">{{ statusLabels[s] }}</span>
+      <span class="pipeline-count">{{ getByStatus(s).length }}</span>
+    </div>
+    <div class="task-card" *ngFor="let task of getByStatus(s)" (click)="toggleStatus(task)">
+      <div class="task-priority-bar" [class]="'priority-' + task.priority"></div>
+      <div class="task-title">{{ task.title }}</div>
+      <div class="task-desc" *ngIf="task.description">{{ task.description }}</div>
+      <div class="task-footer">
+        <span class="badge {{ getPriorityClass(task.priority) }}" style="font-size:9px;">
+          <i class="ti {{ getPriorityIcon(task.priority) }}" style="font-size:10px;"></i>
+          {{ task.priority }}
+        </span>
+        <span style="font-size:10px;color:var(--text3);" *ngIf="task.dueDate">📅 {{ task.dueDate }}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:8px;">
+        <div class="avatar avatar-sm" style="background:linear-gradient(135deg,var(--accent),var(--cyan));font-size:10px;">
+          {{ task.assignee }}
+        </div>
+        <span style="font-size:11px;color:var(--text3);">{{ task.assignee }}</span>
+        <span class="badge badge-blue" style="margin-left:auto;font-size:9px;" *ngIf="task.relatedLead">{{ task.relatedLead }}</span>
+      </div>
+    </div>
+    <button class="kanban-add" *ngIf="perms.canCreate('tasks')" (click)="showModal.set(true)">
+      <i class="ti ti-plus"></i> Add task
+    </button>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" *ngIf="showModal()" (click)="showModal.set(false)">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <i class="ti ti-plus" style="color:var(--accent2);font-size:18px;"></i>
+      <span class="modal-title">New Task</span>
+      <button class="btn btn-ghost btn-sm" style="margin-left:auto;" (click)="showModal.set(false)"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Task Title *</label><input class="form-control" placeholder="Follow up with client..." [(ngModel)]="newTask.title" /></div>
+      <div class="form-group"><label class="form-label">Description</label><textarea class="form-control" rows="3" [(ngModel)]="newTask.description"></textarea></div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Priority</label>
+          <select class="form-control" [(ngModel)]="newTask.priority">
+            <option *ngFor="let p of priorities" [value]="p">{{ p | titlecase }}</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Due Date</label><input type="date" class="form-control" [(ngModel)]="newTask.dueDate" /></div>
+      </div>
+      <div class="form-group"><label class="form-label">Assignee</label><input class="form-control" placeholder="Aryan Mehta" [(ngModel)]="newTask.assignee" /></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" (click)="showModal.set(false)">Cancel</button>
+      <button class="btn btn-primary" (click)="addTask()"><i class="ti ti-check"></i> Create Task</button>
+    </div>
+  </div>
+</div>

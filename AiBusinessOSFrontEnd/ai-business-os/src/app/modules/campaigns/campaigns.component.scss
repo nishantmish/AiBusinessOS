@@ -1,0 +1,10 @@
+.camp-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+.camp-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; }
+.camp-header { display:flex; gap:12px; margin-bottom:14px; align-items:flex-start; }
+.camp-channel-icon { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.camp-name { font-size:14px; font-weight:600; color:var(--text); }
+.camp-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px; padding:12px; background:var(--surface2); border-radius:8px; border:1px solid var(--border); }
+.camp-stat { text-align:center; }
+.camp-stat-val { font-size:16px; font-weight:600; color:var(--text); font-family:var(--mono); }
+.camp-stat-label { font-size:10px; color:var(--text3); margin-top:2px; }
+.camp-footer { display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:10px; }

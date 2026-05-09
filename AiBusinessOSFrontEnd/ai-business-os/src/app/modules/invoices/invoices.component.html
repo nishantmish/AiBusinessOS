@@ -1,0 +1,100 @@
+<div class="page-header">
+  <div>
+    <div class="page-title"><i class="ti ti-file-invoice" style="color:var(--amber);margin-right:8px;"></i>Invoices & Billing</div>
+    <div class="page-subtitle">{{ data.invoices().length }} total invoices</div>
+  </div>
+  <div class="page-actions">
+    <button class="btn"><i class="ti ti-download"></i> Export</button>
+    <button class="btn btn-primary" *ngIf="perms.canCreate('invoices')" (click)="showCreate.set(true)">
+      <i class="ti ti-plus"></i> New Invoice
+    </button>
+  </div>
+</div>
+
+<!-- KPIs -->
+<div class="grid-4" style="margin-bottom:18px;">
+  <div class="kpi-card green"><div class="kpi-label"><i class="ti ti-circle-check"></i> Collected</div><div class="kpi-value">₹{{ totalRevenue().toLocaleString() }}</div><div class="kpi-delta text-success"><i class="ti ti-arrow-up" style="font-size:11px;"></i> This month</div></div>
+  <div class="kpi-card blue"><div class="kpi-label"><i class="ti ti-clock"></i> Pending</div><div class="kpi-value">₹{{ totalPending().toLocaleString() }}</div><div class="kpi-delta text-muted">Awaiting payment</div></div>
+  <div class="kpi-card red"><div class="kpi-label"><i class="ti ti-alert-circle"></i> Overdue</div><div class="kpi-value">₹{{ totalOverdue().toLocaleString() }}</div><div class="kpi-delta text-danger">Needs attention</div></div>
+  <div class="kpi-card amber"><div class="kpi-label"><i class="ti ti-file"></i> Total Invoices</div><div class="kpi-value">{{ data.invoices().length }}</div><div class="kpi-delta text-muted">{{ data.invoices().filter(i=>i.status==='paid').length }} paid</div></div>
+</div>
+
+<!-- Filter + Table -->
+<div class="card">
+  <div class="card-header">
+    <div class="inv-filter">
+      <button *ngFor="let s of ['all',...statuses]" [class.active]="filterStatus()===s" (click)="filterStatus.set(s)">
+        {{ s==='all'?'All':(s|titlecase) }}
+      </button>
+    </div>
+  </div>
+  <table class="table">
+    <thead><tr>
+      <th>Invoice #</th><th>Customer</th><th>Amount</th><th>Tax</th><th>Total</th><th>Due Date</th><th>Status</th><th>Actions</th>
+    </tr></thead>
+    <tbody>
+      <tr *ngFor="let inv of filtered()" (click)="selectedInvoice.set(inv)">
+        <td class="text-mono" style="color:var(--accent2);">{{ inv.invoiceNo }}</td>
+        <td style="color:var(--text);font-weight:500;">{{ inv.customerName }}</td>
+        <td class="text-mono">₹{{ inv.amount.toLocaleString() }}</td>
+        <td class="text-mono text-muted">₹{{ inv.taxAmount.toLocaleString() }}</td>
+        <td class="text-mono" style="color:var(--text);font-weight:500;">₹{{ (inv.amount+inv.taxAmount).toLocaleString() }}</td>
+        <td class="text-muted text-mono" style="font-size:11px;">{{ inv.dueDate }}</td>
+        <td>
+          <span class="badge {{ getStatusClass(inv.status) }}">
+            <i class="ti {{ getStatusIcon(inv.status) }}" style="font-size:10px;"></i>
+            {{ inv.status | titlecase }}
+          </span>
+        </td>
+        <td (click)="$event.stopPropagation()">
+          <div style="display:flex;gap:4px;">
+            <button class="btn btn-sm btn-ghost" title="Send"><i class="ti ti-brand-whatsapp" style="color:#25d366;"></i></button>
+            <button class="btn btn-sm btn-ghost" title="Download"><i class="ti ti-download"></i></button>
+            <button class="btn btn-sm btn-success btn-sm" *ngIf="inv.status!=='paid'" (click)="markPaid(inv)">Mark Paid</button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" *ngIf="selectedInvoice()" (click)="selectedInvoice.set(null)">
+  <div class="modal" style="width:560px;" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <i class="ti ti-file-invoice" style="color:var(--amber);font-size:18px;"></i>
+      <div>
+        <div class="modal-title">{{ selectedInvoice()!.invoiceNo }}</div>
+        <span class="badge {{ getStatusClass(selectedInvoice()!.status) }}">{{ selectedInvoice()!.status | titlecase }}</span>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="margin-left:auto;" (click)="selectedInvoice.set(null)"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="inv-detail-header">
+        <div><div class="form-label">Customer</div><div style="font-size:15px;font-weight:600;">{{ selectedInvoice()!.customerName }}</div></div>
+        <div style="text-align:right;"><div class="form-label">Due Date</div><div>{{ selectedInvoice()!.dueDate }}</div></div>
+      </div>
+      <table class="table" style="margin-top:14px;">
+        <thead><tr><th>Description</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let item of selectedInvoice()!.items">
+            <td style="color:var(--text);">{{ item.description }}</td>
+            <td class="text-mono">{{ item.qty }}</td>
+            <td class="text-mono">₹{{ item.rate.toLocaleString() }}</td>
+            <td class="text-mono" style="color:var(--text);font-weight:500;">₹{{ item.amount.toLocaleString() }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="inv-totals">
+        <div class="inv-total-row"><span>Subtotal</span><span class="text-mono">₹{{ selectedInvoice()!.amount.toLocaleString() }}</span></div>
+        <div class="inv-total-row"><span>GST (18%)</span><span class="text-mono">₹{{ selectedInvoice()!.taxAmount.toLocaleString() }}</span></div>
+        <div class="inv-total-row total"><span>Total</span><span class="text-mono">₹{{ (selectedInvoice()!.amount+selectedInvoice()!.taxAmount).toLocaleString() }}</span></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn"><i class="ti ti-brand-whatsapp" style="color:#25d366;"></i> Send</button>
+      <button class="btn"><i class="ti ti-download"></i> PDF</button>
+      <button class="btn btn-success" *ngIf="selectedInvoice()!.status!=='paid'" (click)="markPaid(selectedInvoice()!)"><i class="ti ti-circle-check"></i> Mark Paid</button>
+    </div>
+  </div>
+</div>

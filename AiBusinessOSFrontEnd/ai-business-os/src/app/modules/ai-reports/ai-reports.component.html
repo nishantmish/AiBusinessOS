@@ -1,0 +1,60 @@
+<div class="page-header">
+  <div>
+    <div class="page-title"><i class="ti ti-sparkles" style="color:var(--accent2);margin-right:8px;"></i>AI Business Reports</div>
+    <div class="page-subtitle">AI-generated insights · Powered by GPT-4o + Claude</div>
+  </div>
+  <div class="page-actions">
+    <button class="btn"><i class="ti ti-refresh"></i> Regenerate</button>
+    <button class="btn btn-primary"><i class="ti ti-download"></i> Export All</button>
+  </div>
+</div>
+
+<!-- Credits used banner -->
+<div class="ai-banner">
+  <div class="ai-banner-icon"><i class="ti ti-robot"></i></div>
+  <div>
+    <div style="font-size:13px;font-weight:500;color:var(--text);">AI Reports Engine Active</div>
+    <div style="font-size:11px;color:var(--text3);">Last generated: Today 08:00 AM · Next scheduled: Tomorrow 08:00 AM</div>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:12px;">
+    <div style="text-align:right;">
+      <div style="font-size:11px;color:var(--text3);">Credits used today</div>
+      <div style="font-size:16px;font-weight:600;color:var(--accent2);font-family:var(--mono);">29 credits</div>
+    </div>
+    <div class="toggle-switch on"></div>
+  </div>
+</div>
+
+<div class="reports-grid">
+  <div class="report-card" *ngFor="let r of reports">
+    <div class="report-header">
+      <div class="report-icon" [style.background]="getIconBg(r.color)" [style.color]="getIconColor(r.color)">
+        <i class="ti {{ r.icon }}"></i>
+      </div>
+      <div style="flex:1;">
+        <div class="report-title">{{ r.title }}</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+          <span class="badge {{ getColorClass(r.color) }}" style="font-size:9px;">{{ r.type | titlecase }}</span>
+          <span style="font-size:11px;color:var(--text3);">{{ r.date }}</span>
+          <span style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-left:auto;">{{ r.creditsUsed }} credits</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="report-summary">{{ r.summary }}</div>
+
+    <div class="report-insights">
+      <div style="font-size:10px;font-weight:500;color:var(--text3);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;">Key Insights</div>
+      <div class="insight-point" *ngFor="let ins of r.insights">
+        <i class="ti ti-arrow-right" style="font-size:11px;color:var(--accent2);flex-shrink:0;margin-top:2px;"></i>
+        <span>{{ ins }}</span>
+      </div>
+    </div>
+
+    <div class="report-footer">
+      <button class="btn btn-sm btn-ghost"><i class="ti ti-refresh"></i> Regenerate</button>
+      <button class="btn btn-sm btn-ghost"><i class="ti ti-download"></i> PDF</button>
+      <button class="btn btn-sm btn-ghost"><i class="ti ti-brand-whatsapp" style="color:#25d366;"></i> Share</button>
+    </div>
+  </div>
+</div>

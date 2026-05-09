@@ -1,0 +1,87 @@
+<div class="page-header">
+  <div>
+    <div class="page-title"><i class="ti ti-brand-whatsapp" style="color:#25d366;margin-right:8px;"></i>WhatsApp Inbox</div>
+    <div class="page-subtitle">{{ data.conversations().filter(c=>c.unread>0).length }} unread conversations</div>
+  </div>
+  <div class="page-actions">
+    <button class="btn"><i class="ti ti-template"></i> Templates</button>
+    <button class="btn btn-primary"><i class="ti ti-speakerphone"></i> Broadcast</button>
+  </div>
+</div>
+
+<div class="inbox-shell">
+  <!-- Sidebar -->
+  <div class="inbox-sidebar">
+    <div class="inbox-filter">
+      <button [class.active]="filter()==='all'" (click)="filter.set('all')">All</button>
+      <button [class.active]="filter()==='open'" (click)="filter.set('open')">Open</button>
+      <button [class.active]="filter()==='resolved'" (click)="filter.set('resolved')">Resolved</button>
+    </div>
+    <div class="conv-list">
+      <div class="conv-item" *ngFor="let conv of filtered()" [class.active]="selected()?.id===conv.id" (click)="select(conv)">
+        <div class="avatar avatar-md" [style.background]="conv.avatarColor">{{ getInitials(conv.customerName) }}</div>
+        <div class="conv-content">
+          <div class="conv-top">
+            <span class="conv-name">{{ conv.customerName }}</span>
+            <span class="conv-time">{{ conv.lastMessageAt }}</span>
+          </div>
+          <div class="conv-preview">{{ conv.lastMessage }}</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+            <span class="badge {{ getStatusClass(conv.status) }}" style="font-size:9px;">{{ conv.status }}</span>
+            <span style="font-size:10px;color:var(--text3);">{{ conv.assignee }}</span>
+          </div>
+        </div>
+        <div class="unread-badge" *ngIf="conv.unread">{{ conv.unread }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat area -->
+  <div class="chat-area" *ngIf="selected(); else empty">
+    <div class="chat-header">
+      <div class="avatar avatar-md" [style.background]="selected()!.avatarColor">{{ getInitials(selected()!.customerName) }}</div>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);">{{ selected()!.customerName }}</div>
+        <div style="font-size:11px;color:var(--text3);">{{ selected()!.customerPhone }} · {{ selected()!.channel }}</div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px;">
+        <button class="btn btn-sm"><i class="ti ti-user"></i> View Lead</button>
+        <button class="btn btn-sm"><i class="ti ti-check"></i> Resolve</button>
+        <button class="btn btn-sm"><i class="ti ti-robot" style="color:var(--accent2);"></i> AI Assist</button>
+      </div>
+    </div>
+
+    <div class="chat-messages">
+      <div class="chat-msg" *ngFor="let msg of selected()!.messages" [class.sent]="msg.sender==='agent'" [class.ai]="msg.sender==='ai'">
+        <div class="msg-bubble">
+          {{ msg.content }}
+          <span class="msg-ai-tag" *ngIf="msg.sender==='ai'">AI</span>
+        </div>
+        <div class="msg-meta">{{ msg.timestamp }} <i class="ti ti-checks" *ngIf="msg.status==='read'" style="color:var(--accent2);font-size:11px;"></i></div>
+      </div>
+    </div>
+
+    <div class="chat-input">
+      <div class="quick-replies">
+        <button class="qr-btn">👋 Welcome</button>
+        <button class="qr-btn">📋 Send Plans</button>
+        <button class="qr-btn">📅 Book Demo</button>
+        <button class="qr-btn">🧾 Send Invoice</button>
+      </div>
+      <div class="input-row">
+        <button class="btn btn-sm btn-ghost"><i class="ti ti-paperclip"></i></button>
+        <input type="text" class="form-control" placeholder="Type a message..." [value]="replyText()" (input)="replyText.set($any($event.target).value)" (keyup.enter)="sendReply()" />
+        <button class="btn btn-primary" (click)="sendReply()"><i class="ti ti-send"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #empty>
+    <div class="chat-area" style="display:flex;align-items:center;justify-content:center;">
+      <div class="empty-state">
+        <i class="ti ti-brand-whatsapp" style="font-size:48px;color:#25d366;opacity:0.3;display:block;margin-bottom:12px;text-align:center;"></i>
+        <p>Select a conversation to start chatting</p>
+      </div>
+    </div>
+  </ng-template>
+</div>
