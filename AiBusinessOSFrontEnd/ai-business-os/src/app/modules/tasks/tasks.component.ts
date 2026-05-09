@@ -3,12 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MockDataService } from '../../core/services/mock-data.service';
 import { PermissionService } from '../../core/services/permission.service';
+import { AuthService } from '../../core/services/auth.service';
+import { authDisplayName } from '../../core/utils/jwt';
 import { Task } from '../../core/models';
 
 @Component({ selector:'app-tasks', standalone:true, imports:[CommonModule,FormsModule], templateUrl:'./tasks.component.html', styleUrls:['./tasks.component.scss'] })
 export class TasksComponent {
   data = inject(MockDataService);
   perms = inject(PermissionService);
+  auth = inject(AuthService);
   showModal = signal(false);
   filterStatus = signal('all');
   filterPriority = signal('all');
@@ -37,7 +40,8 @@ export class TasksComponent {
   addTask() {
     const t: Task = {
       id:'t'+Date.now(), title:this.newTask.title, description:this.newTask.description,
-      assignee:this.newTask.assignee||this.data.currentUser().name, assigneeId:'u1',
+      assignee:this.newTask.assignee||authDisplayName(this.auth.getUser()),
+      assigneeId:this.auth.getUser()?.id ?? '',
       dueDate:this.newTask.dueDate, priority:this.newTask.priority as any,
       status:'todo', tags:[], createdAt:new Date().toISOString().slice(0,10)
     };

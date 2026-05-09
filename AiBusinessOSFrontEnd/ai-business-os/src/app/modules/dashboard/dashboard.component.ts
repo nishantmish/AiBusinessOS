@@ -1,7 +1,8 @@
-import { Component, inject, signal, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, inject, AfterViewInit, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MockDataService } from '../../core/services/mock-data.service';
+import { LeadsService } from '../../core/services/leads.service';
 
 declare const Chart: any;
 
@@ -12,8 +13,9 @@ declare const Chart: any;
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements AfterViewInit {
+export class DashboardComponent implements AfterViewInit, OnInit {
   data = inject(MockDataService);
+  leadsApi = inject(LeadsService);
   @ViewChild('revenueChart') chartRef!: ElementRef;
 
   stages = ['new','contacted','qualified','proposal','won','lost'] as const;
@@ -46,8 +48,12 @@ export class DashboardComponent implements AfterViewInit {
     return name.split(' ').map(n => n[0]).join('');
   }
 
+  ngOnInit(): void {
+    this.leadsApi.loadLeads().subscribe();
+  }
+
   getLeadsByStage(stage: string) {
-    return this.data.leads().filter(l => l.stage === stage).slice(0, 3);
+    return this.leadsApi.leads().filter(l => l.stage === stage).slice(0, 3);
   }
 
   getScoreClass(score: number) {

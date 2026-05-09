@@ -3,6 +3,15 @@ import { Role } from './index';
 export interface LoginRequest {
   email: string;
   password: string;
+  tenantId?: string;
+}
+
+/** Matches AiBusinessOS.Api AuthTokenResponse (camelCase JSON). */
+export interface AuthTokenApiResponse {
+  accessToken: string;
+  accessTokenExpiresAt: string;
+  refreshToken: string;
+  refreshTokenExpiresAt: string;
 }
 
 export interface LoginResponse {

@@ -1,7 +1,11 @@
 <div class="page-header">
   <div>
     <div class="page-title"><i class="ti ti-users" style="color:var(--accent2);margin-right:8px;"></i>CRM — Lead Management</div>
-    <div class="page-subtitle">{{ filtered().length }} leads · AI-scored pipeline</div>
+    <div class="page-subtitle">
+      {{ filtered().length }} leads · AI-scored pipeline
+      <span *ngIf="leadsApi.loading()" class="text-muted" style="margin-left:8px;">Loading…</span>
+    </div>
+    <div *ngIf="leadsApi.error()" class="text-error" style="font-size:13px;margin-top:6px;">{{ leadsApi.error() }}</div>
   </div>
   <div class="page-actions">
     <div class="view-toggle">
@@ -29,10 +33,10 @@
     <option *ngFor="let s of sources" [value]="s">{{ s }}</option>
   </select>
   <div class="stats-chips">
-    <span class="badge badge-blue">{{ data.leads().filter(l=>l.stage==='new').length }} New</span>
-    <span class="badge badge-amber">{{ data.leads().filter(l=>l.stage==='qualified').length }} Qualified</span>
-    <span class="badge badge-green">{{ data.leads().filter(l=>l.stage==='won').length }} Won</span>
-    <span class="badge badge-red">{{ data.leads().filter(l=>l.stage==='lost').length }} Lost</span>
+    <span class="badge badge-blue">{{ filtered().filter(l=>l.stage==='new').length }} New</span>
+    <span class="badge badge-amber">{{ filtered().filter(l=>l.stage==='qualified').length }} Qualified</span>
+    <span class="badge badge-green">{{ filtered().filter(l=>l.stage==='won').length }} Won</span>
+    <span class="badge badge-red">{{ filtered().filter(l=>l.stage==='lost').length }} Lost</span>
   </div>
 </div>
 

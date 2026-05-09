@@ -1,54 +1,27 @@
 import { Injectable, signal } from '@angular/core';
 import {
-  User, Organization, Lead, Conversation, Message,
+  User, Organization, Conversation,
   Task, Invoice, Workflow, Campaign, Employee,
-  AttendanceRecord, Notification, Role
+  AttendanceRecord, Notification,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
-
-  currentUser = signal<User>({
-    id: 'u1', name: 'Aryan Mehta', email: 'aryan@fitzoneGym.com',
-    phone: '+91 98765 43210', role: 'org_owner', avatar: 'AM',
-    orgId: 'org1', status: 'active', createdAt: '2024-01-15',
-    department: 'Management', avatarColor: 'linear-gradient(135deg,#06b6d4,#3b82f6)'
-  });
-
-  currentRole = signal<Role>('org_owner');
-
   organization = signal<Organization>({
-    id: 'org1', name: 'FitZone Gym', slug: 'fitzone-gym', niche: 'Gym & Fitness',
-    plan: 'growth', timezone: 'Asia/Kolkata', status: 'active',
-    createdAt: '2024-01-10', branches: 3, aiCredits: 2000, aiCreditsUsed: 1380
+    id: 'org1',
+    name: 'Workspace',
+    slug: 'workspace',
+    niche: 'Configure in Settings',
+    plan: 'starter',
+    timezone: 'UTC',
+    status: 'active',
+    createdAt: '2026-01-01',
+    branches: 0,
+    aiCredits: 0,
+    aiCreditsUsed: 0,
   });
 
-  notifications = signal<Notification[]>([
-    { id:'n1', title:'Invoice Paid', message:'Meera Iyer paid ₹8,500', type:'success', read:false, createdAt:'2 min ago', icon:'ti-circle-check' },
-    { id:'n2', title:'New Lead', message:'Rahul Sharma via WhatsApp', type:'info', read:false, createdAt:'6 min ago', icon:'ti-user-plus' },
-    { id:'n3', title:'Overdue Alert', message:'Vikram Rao invoice overdue 5 days', type:'warning', read:false, createdAt:'45 min ago', icon:'ti-alert-triangle' },
-    { id:'n4', title:'Workflow Triggered', message:'Lead Welcome Flow executed x3', type:'info', read:true, createdAt:'1 hr ago', icon:'ti-git-fork' },
-    { id:'n5', title:'AI Report Ready', message:'Weekly business insights generated', type:'success', read:true, createdAt:'8 hr ago', icon:'ti-sparkles' },
-  ]);
-
-  leads = signal<Lead[]>([
-    { id:'l1', orgId:'org1', name:'Rahul Sharma', email:'rahul@gmail.com', phone:'+91 98001 11001', source:'WhatsApp', stage:'new', score:92, status:'open', owner:'Riya Patel', ownerId:'u3', value:12000, tags:['hot','annual'], notes:'Very interested in annual membership', createdAt:'2026-05-08', updatedAt:'2026-05-08' },
-    { id:'l2', orgId:'org1', name:'Priya Kapoor', email:'priya@email.com', phone:'+91 98001 11002', source:'Form', stage:'new', score:87, status:'open', owner:'Riya Patel', ownerId:'u3', value:8000, tags:['warm'], notes:'Interested in yoga classes', createdAt:'2026-05-07', updatedAt:'2026-05-08' },
-    { id:'l3', orgId:'org1', name:'Aditya Nair', email:'aditya@email.com', phone:'+91 98001 11003', source:'Manual', stage:'new', score:64, status:'open', owner:'Aryan Mehta', ownerId:'u1', value:6000, tags:['cold'], notes:'Walk-in enquiry', createdAt:'2026-05-06', updatedAt:'2026-05-07' },
-    { id:'l4', orgId:'org1', name:'Sneha Reddy', email:'sneha@email.com', phone:'+91 98001 11004', source:'WhatsApp', stage:'contacted', score:79, status:'open', owner:'Riya Patel', ownerId:'u3', value:9000, tags:['warm','follow-up'], notes:'Sent brochure, awaiting reply', createdAt:'2026-05-05', updatedAt:'2026-05-08' },
-    { id:'l5', orgId:'org1', name:'Mohit Verma', email:'mohit@email.com', phone:'+91 98001 11005', source:'Form', stage:'contacted', score:55, status:'open', owner:'Aryan Mehta', ownerId:'u1', value:5000, tags:['cold'], notes:'Needs follow-up', createdAt:'2026-05-04', updatedAt:'2026-05-07' },
-    { id:'l6', orgId:'org1', name:'Kavya Pillai', email:'kavya@email.com', phone:'+91 98001 11006', source:'Referral', stage:'contacted', score:88, status:'open', owner:'Riya Patel', ownerId:'u3', value:15000, tags:['hot','vip'], notes:'Referred by Meera Iyer', createdAt:'2026-05-03', updatedAt:'2026-05-08' },
-    { id:'l7', orgId:'org1', name:'Neha Singh', email:'neha@email.com', phone:'+91 98001 11007', source:'WhatsApp', stage:'qualified', score:91, status:'open', owner:'Riya Patel', ownerId:'u3', value:12000, tags:['hot'], notes:'Very keen, discussed packages', createdAt:'2026-05-02', updatedAt:'2026-05-08' },
-    { id:'l8', orgId:'org1', name:'Arjun Malhotra', email:'arjun@email.com', phone:'+91 98001 11008', source:'Instagram', stage:'qualified', score:95, status:'open', owner:'Aryan Mehta', ownerId:'u1', value:18000, tags:['hot','premium'], notes:'Wants premium + PT sessions', createdAt:'2026-05-01', updatedAt:'2026-05-08' },
-    { id:'l9', orgId:'org1', name:'Tara Joshi', email:'tara@email.com', phone:'+91 98001 11009', source:'Form', stage:'qualified', score:72, status:'open', owner:'Riya Patel', ownerId:'u3', value:7000, tags:['warm'], notes:'Interested in group classes', createdAt:'2026-04-30', updatedAt:'2026-05-07' },
-    { id:'l10', orgId:'org1', name:'Vikram Bose', email:'vikram.b@email.com', phone:'+91 98001 11010', source:'Google', stage:'proposal', score:68, status:'open', owner:'Aryan Mehta', ownerId:'u1', value:8500, tags:['warm'], notes:'Sent proposal, negotiating', createdAt:'2026-04-28', updatedAt:'2026-05-06' },
-    { id:'l11', orgId:'org1', name:'Anita Chauhan', email:'anita@email.com', phone:'+91 98001 11011', source:'WhatsApp', stage:'proposal', score:83, status:'open', owner:'Riya Patel', ownerId:'u3', value:11000, tags:['hot'], notes:'Family membership interest', createdAt:'2026-04-27', updatedAt:'2026-05-08' },
-    { id:'l12', orgId:'org1', name:'Rishi Kumar', email:'rishi@email.com', phone:'+91 98001 11012', source:'Referral', stage:'proposal', score:61, status:'open', owner:'Aryan Mehta', ownerId:'u1', value:6500, tags:['warm'], notes:'Budget conscious', createdAt:'2026-04-26', updatedAt:'2026-05-05' },
-    { id:'l13', orgId:'org1', name:'Divya Menon', email:'divya@email.com', phone:'+91 98001 11013', source:'WhatsApp', stage:'won', score:96, status:'won', owner:'Riya Patel', ownerId:'u3', value:15000, tags:['converted'], notes:'Signed annual premium', createdAt:'2026-04-20', updatedAt:'2026-05-07' },
-    { id:'l14', orgId:'org1', name:'Suresh Pillai', email:'suresh@email.com', phone:'+91 98001 11014', source:'Form', stage:'won', score:90, status:'won', owner:'Aryan Mehta', ownerId:'u1', value:12000, tags:['converted'], notes:'6-month plan activated', createdAt:'2026-04-18', updatedAt:'2026-05-06' },
-    { id:'l15', orgId:'org1', name:'Meera Iyer', email:'meera@email.com', phone:'+91 98001 11015', source:'Referral', stage:'won', score:94, status:'won', owner:'Riya Patel', ownerId:'u3', value:8500, tags:['converted','vip'], notes:'3-month + PT renewal', createdAt:'2026-04-15', updatedAt:'2026-05-08' },
-    { id:'l16', orgId:'org1', name:'Kiran Das', email:'kiran@email.com', phone:'+91 98001 11016', source:'Instagram', stage:'lost', score:30, status:'lost', owner:'Aryan Mehta', ownerId:'u1', value:0, tags:['lost','price'], notes:'Went to competitor', createdAt:'2026-04-10', updatedAt:'2026-04-25' },
-  ]);
+  notifications = signal<Notification[]>([]);
 
   conversations = signal<Conversation[]>([
     { id:'c1', orgId:'org1', customerName:'Rahul Sharma', customerPhone:'+91 98001 11001', channel:'whatsapp', assignee:'Riya Patel', assigneeId:'u3', lastMessage:'Interested in annual membership plan', lastMessageAt:'2 min ago', status:'open', unread:3, avatarColor:'linear-gradient(135deg,#6366f1,#8b5cf6)', messages:[
@@ -151,10 +124,4 @@ export class MockDataService {
     { id:'u5', name:'Sanjay Kumar', email:'sanjay@fitzoneGym.com', phone:'+91 98765 43214', role:'employee', avatar:'SK', orgId:'org1', status:'active', createdAt:'2023-09-15', avatarColor:'linear-gradient(135deg,#a855f7,#ec4899)' },
     { id:'u6', name:'Anjali Nair', email:'anjali@fitzoneGym.com', phone:'+91 98765 43215', role:'employee', avatar:'AN', orgId:'org1', status:'active', createdAt:'2024-02-01', avatarColor:'linear-gradient(135deg,#ef4444,#f59e0b)' },
   ]);
-
-  switchRole(role: Role): void {
-    this.currentRole.set(role);
-    const user = this.users().find(u => u.role === role) ?? this.users()[0];
-    this.currentUser.set(user);
-  }
 }

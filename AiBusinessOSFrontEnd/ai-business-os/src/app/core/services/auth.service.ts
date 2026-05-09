@@ -1,7 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, throwError } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { Observable, throwError, finalize, shareReplay, map, tap, catchError, of } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import {
   LoginRequest,
   LoginResponse,
@@ -12,23 +12,27 @@ import {
   OtpVerifyRequest,
   OtpVerifyResponse,
   ForgotPasswordRequest,
-  ResetPasswordRequest
+  ResetPasswordRequest,
+  AuthTokenApiResponse,
 } from '../models/auth';
+import { authUserFromAccessToken, isJwtExpired } from '../utils/jwt';
 
-const AUTH_STORAGE_KEY = 'app-auth-token';
-const AUTH_USER_KEY = 'app-auth-user';
-const API_URL = '/api/auth'; // Update this to your API base URL
+const AUTH_ACCESS_KEY = 'app-access-token';
+const AUTH_REFRESH_KEY = 'app-refresh-token';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private readonly apiBase = `${environment.apiBaseUrl}/v1.0`;
+
   private authState = signal<AuthState>({
-    user: this.loadUserFromStorage(),
-    token: this.loadTokenFromStorage(),
-    isAuthenticated: !!this.loadTokenFromStorage(),
+    user: null,
+    token: this.loadAccessToken(),
+    isAuthenticated: false,
     isLoading: false,
     error: null,
     otpSent: false,
-    otpVerified: false
+    otpVerified: false,
+    refreshToken: this.loadRefreshToken(),
   });
 
   public state$ = this.authState.asReadonly();
@@ -37,119 +41,130 @@ export class AuthService {
   public isLoading$ = computed(() => this.authState().isLoading);
   public error$ = computed(() => this.authState().error);
 
+  private refreshInFlight$: Observable<void> | null = null;
+
   constructor(private http: HttpClient) {
-    this.initializeAuth();
+    this.restoreSession();
   }
 
-  /**
-   * Initialize authentication on app load
-   */
-  private initializeAuth(): void {
-    const token = this.loadTokenFromStorage();
-    const user = this.loadUserFromStorage();
+  private restoreSession(): void {
+    const access = this.loadAccessToken();
+    const refresh = this.loadRefreshToken();
 
-    if (token && user) {
-      this.authState.update(state => ({
-        ...state,
-        token,
-        user,
-        isAuthenticated: true
-      }));
+    if (access && !isJwtExpired(access)) {
+      const user = authUserFromAccessToken(access);
+      if (user) {
+        this.authState.update(s => ({
+          ...s,
+          token: access,
+          refreshToken: refresh,
+          user,
+          isAuthenticated: true,
+        }));
+        return;
+      }
+    }
+
+    if (refresh) {
+      this.refreshAccessToken().subscribe({
+        error: () => this.logoutLocal(),
+      });
     }
   }
 
-  /**
-   * Load token from localStorage
-   */
-  private loadTokenFromStorage(): string | null {
+  private loadAccessToken(): string | null {
     try {
-      return localStorage.getItem(AUTH_STORAGE_KEY);
+      return sessionStorage.getItem(AUTH_ACCESS_KEY);
     } catch {
       return null;
     }
   }
 
-  /**
-   * Load user from localStorage
-   */
-  private loadUserFromStorage(): AuthUser | null {
+  private loadRefreshToken(): string | null {
     try {
-      const data = localStorage.getItem(AUTH_USER_KEY);
-      return data ? JSON.parse(data) : null;
+      return sessionStorage.getItem(AUTH_REFRESH_KEY);
     } catch {
       return null;
     }
   }
 
-  /**
-   * Save authentication data to localStorage
-   */
-  private saveAuthData(token: string, user: AuthUser): void {
+  private persistTokens(response: AuthTokenApiResponse): void {
     try {
-      localStorage.setItem(AUTH_STORAGE_KEY, token);
-      localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+      sessionStorage.setItem(AUTH_ACCESS_KEY, response.accessToken);
+      sessionStorage.setItem(AUTH_REFRESH_KEY, response.refreshToken);
     } catch (e) {
-      console.warn('Failed to save auth data:', e);
+      console.warn('Failed to persist tokens:', e);
+    }
+
+    const user = authUserFromAccessToken(response.accessToken);
+    this.authState.update(s => ({
+      ...s,
+      token: response.accessToken,
+      refreshToken: response.refreshToken,
+      user,
+      isAuthenticated: !!user,
+      error: null,
+    }));
+  }
+
+  private clearStorage(): void {
+    try {
+      sessionStorage.removeItem(AUTH_ACCESS_KEY);
+      sessionStorage.removeItem(AUTH_REFRESH_KEY);
+    } catch (e) {
+      console.warn('Failed to clear auth storage:', e);
     }
   }
 
-  /**
-   * Clear authentication data
-   */
-  private clearAuthData(): void {
-    try {
-      localStorage.removeItem(AUTH_STORAGE_KEY);
-      localStorage.removeItem(AUTH_USER_KEY);
-    } catch (e) {
-      console.warn('Failed to clear auth data:', e);
-    }
-  }
-
-  /**
-   * Get current token
-   */
   getToken(): string | null {
     return this.authState().token;
   }
 
-  /**
-   * Get current user
-   */
+  getRefreshToken(): string | null {
+    return this.authState().refreshToken ?? this.loadRefreshToken();
+  }
+
   getUser(): AuthUser | null {
     return this.authState().user;
   }
 
-  /**
-   * Check if user is authenticated
-   */
   isAuthenticated(): boolean {
     return this.authState().isAuthenticated;
   }
 
-  /**
-   * Login with email and password
-   */
   login(request: LoginRequest): Observable<LoginResponse> {
-    this.authState.update(state => ({ ...state, isLoading: true, error: null }));
+    this.authState.update(s => ({ ...s, isLoading: true, error: null }));
 
-    return this.http.post<LoginResponse>(`${API_URL}/login`, request).pipe(
-      tap(response => {
-        this.saveAuthData(response.token, response.user);
-        this.authState.update(state => ({
-          ...state,
-          user: response.user,
-          token: response.token,
-          isAuthenticated: true,
-          isLoading: false,
-          refreshToken: response.refreshToken || null
-        }));
+    const body: { email: string; password: string; tenantId?: string } = {
+      email: request.email.trim(),
+      password: request.password,
+    };
+    if (request.tenantId) {
+      body.tenantId = request.tenantId;
+    }
+
+    return this.http.post<AuthTokenApiResponse>(`${this.apiBase}/auth/login`, body).pipe(
+      tap(res => this.persistTokens(res)),
+      map((res): LoginResponse => {
+        const user = authUserFromAccessToken(res.accessToken);
+        if (!user) {
+          throw new Error('Invalid access token');
+        }
+        return {
+          token: res.accessToken,
+          user,
+          refreshToken: res.refreshToken,
+        };
+      }),
+      tap(() => {
+        this.authState.update(s => ({ ...s, isLoading: false }));
       }),
       catchError(error => {
         const errorMessage = error.error?.message || 'Login failed';
-        this.authState.update(state => ({
-          ...state,
+        this.authState.update(s => ({
+          ...s,
           error: errorMessage,
-          isLoading: false
+          isLoading: false,
         }));
         return throwError(() => error);
       })
@@ -157,155 +172,39 @@ export class AuthService {
   }
 
   /**
-   * Sign up with email and password
+   * Rotates refresh token; used by interceptor on 401 and on cold start when access JWT expired.
    */
-  signup(request: SignupRequest): Observable<SignupResponse> {
-    this.authState.update(state => ({ ...state, isLoading: true, error: null }));
+  refreshAccessToken(): Observable<void> {
+    if (this.refreshInFlight$) {
+      return this.refreshInFlight$;
+    }
 
-    return this.http.post<SignupResponse>(`${API_URL}/signup`, request).pipe(
-      tap(response => {
-        this.saveAuthData(response.token, response.user);
-        this.authState.update(state => ({
-          ...state,
-          user: response.user,
-          token: response.token,
-          isAuthenticated: true,
-          isLoading: false
-        }));
-      }),
-      catchError(error => {
-        const errorMessage = error.error?.message || 'Signup failed';
-        this.authState.update(state => ({
-          ...state,
-          error: errorMessage,
-          isLoading: false
-        }));
-        return throwError(() => error);
-      })
-    );
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      return throwError(() => new Error('No refresh token'));
+    }
+
+    this.refreshInFlight$ = this.http
+      .post<AuthTokenApiResponse>(`${this.apiBase}/auth/refresh`, { refreshToken })
+      .pipe(
+        tap(res => this.persistTokens(res)),
+        map(() => undefined),
+        catchError(err => {
+          this.logoutLocal();
+          return throwError(() => err);
+        }),
+        finalize(() => {
+          this.refreshInFlight$ = null;
+        }),
+        shareReplay(1)
+      );
+
+    return this.refreshInFlight$;
   }
 
-  /**
-   * Send OTP for verification
-   */
-  sendOtp(email: string): Observable<{ message: string }> {
-    this.authState.update(state => ({ ...state, isLoading: true, error: null }));
-
-    return this.http.post<{ message: string }>(`${API_URL}/send-otp`, { email }).pipe(
-      tap(() => {
-        this.authState.update(state => ({
-          ...state,
-          otpSent: true,
-          isLoading: false
-        }));
-      }),
-      catchError(error => {
-        const errorMessage = error.error?.message || 'Failed to send OTP';
-        this.authState.update(state => ({
-          ...state,
-          error: errorMessage,
-          isLoading: false
-        }));
-        return throwError(() => error);
-      })
-    );
-  }
-
-  /**
-   * Verify OTP
-   */
-  verifyOtp(request: OtpVerifyRequest): Observable<OtpVerifyResponse> {
-    this.authState.update(state => ({ ...state, isLoading: true, error: null }));
-
-    return this.http.post<OtpVerifyResponse>(`${API_URL}/verify-otp`, request).pipe(
-      tap(response => {
-        const isVerified = response.verified;
-        const token = response.token;
-        const user = response.user;
-
-        this.authState.update(state => ({
-          ...state,
-          otpVerified: isVerified,
-          isLoading: false
-        }));
-
-        if (isVerified && token && user) {
-          this.saveAuthData(token, user);
-          this.authState.update(state => ({
-            ...state,
-            user,
-            token,
-            isAuthenticated: true
-          }));
-        }
-      }),
-      catchError(error => {
-        const errorMessage = error.error?.message || 'OTP verification failed';
-        this.authState.update(state => ({
-          ...state,
-          error: errorMessage,
-          isLoading: false
-        }));
-        return throwError(() => error);
-      })
-    );
-  }
-
-  /**
-   * Request password reset
-   */
-  forgotPassword(request: ForgotPasswordRequest): Observable<{ message: string }> {
-    this.authState.update(state => ({ ...state, isLoading: true, error: null }));
-
-    return this.http.post<{ message: string }>(`${API_URL}/forgot-password`, request).pipe(
-      tap(() => {
-        this.authState.update(state => ({
-          ...state,
-          isLoading: false
-        }));
-      }),
-      catchError(error => {
-        const errorMessage = error.error?.message || 'Failed to send reset email';
-        this.authState.update(state => ({
-          ...state,
-          error: errorMessage,
-          isLoading: false
-        }));
-        return throwError(() => error);
-      })
-    );
-  }
-
-  /**
-   * Reset password with token
-   */
-  resetPassword(request: ResetPasswordRequest): Observable<{ message: string }> {
-    this.authState.update(state => ({ ...state, isLoading: true, error: null }));
-
-    return this.http.post<{ message: string }>(`${API_URL}/reset-password`, request).pipe(
-      tap(() => {
-        this.authState.update(state => ({
-          ...state,
-          isLoading: false
-        }));
-      }),
-      catchError(error => {
-        const errorMessage = error.error?.message || 'Password reset failed';
-        this.authState.update(state => ({
-          ...state,
-          error: errorMessage,
-          isLoading: false
-        }));
-        return throwError(() => error);
-      })
-    );
-  }
-
-  /**
-   * Logout
-   */
-  logout(): void {
-    this.clearAuthData();
+  /** Clears session without calling the API (e.g. after failed refresh). */
+  logoutLocal(): void {
+    this.clearStorage();
     this.authState.set({
       user: null,
       token: null,
@@ -313,55 +212,183 @@ export class AuthService {
       isLoading: false,
       error: null,
       otpSent: false,
-      otpVerified: false
+      otpVerified: false,
+      refreshToken: null,
     });
   }
 
   /**
-   * Clear error message
+   * Revokes refresh token on the server (when possible), then clears the local session.
    */
-  clearError(): void {
-    this.authState.update(state => ({ ...state, error: null }));
+  logout(): Observable<void> {
+    const refreshToken = this.getRefreshToken();
+    const access = this.getToken();
+
+    if (refreshToken && access) {
+      return this.http
+        .post(`${this.apiBase}/auth/revoke`, { refreshToken, reason: 'logout' }, {
+          headers: { Authorization: `Bearer ${access}` },
+        })
+        .pipe(
+          map(() => undefined),
+          catchError(() => of(void 0)),
+          tap(() => this.logoutLocal())
+        );
+    }
+
+    this.logoutLocal();
+    return of(void 0);
   }
 
-  /**
-   * Refresh token
-   */
-  refreshToken(): Observable<{ token: string; refreshToken?: string }> {
-    return this.http.post<{ token: string; refreshToken?: string }>(`${API_URL}/refresh-token`, {}).pipe(
+  clearError(): void {
+    this.authState.update(s => ({ ...s, error: null }));
+  }
+
+  signup(request: SignupRequest): Observable<SignupResponse> {
+    this.authState.update(s => ({ ...s, isLoading: true, error: null }));
+
+    return this.http.post<SignupResponse>(`${this.apiBase}/auth/signup`, request).pipe(
       tap(response => {
-        this.authState.update(state => ({
-          ...state,
+        try {
+          sessionStorage.setItem(AUTH_ACCESS_KEY, response.token);
+        } catch {
+          /* ignore */
+        }
+        this.authState.update(s => ({
+          ...s,
+          user: response.user,
           token: response.token,
-          refreshToken: response.refreshToken || null
+          isAuthenticated: true,
+          isLoading: false,
         }));
-        localStorage.setItem(AUTH_STORAGE_KEY, response.token);
       }),
       catchError(error => {
-        // If refresh fails, log out user
-        this.logout();
+        const errorMessage = error.error?.message || 'Signup failed';
+        this.authState.update(s => ({
+          ...s,
+          error: errorMessage,
+          isLoading: false,
+        }));
         return throwError(() => error);
       })
     );
   }
 
-  /**
-   * Update user profile
-   */
-  updateProfile(user: Partial<AuthUser>): Observable<AuthUser> {
-    return this.http.put<AuthUser>(`${API_URL}/profile`, user).pipe(
-      tap(updatedUser => {
-        this.authState.update(state => ({
-          ...state,
-          user: updatedUser
+  sendOtp(email: string): Observable<{ message: string }> {
+    this.authState.update(s => ({ ...s, isLoading: true, error: null }));
+
+    return this.http.post<{ message: string }>(`${this.apiBase}/auth/send-otp`, { email }).pipe(
+      tap(() => {
+        this.authState.update(s => ({
+          ...s,
+          otpSent: true,
+          isLoading: false,
         }));
-        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(updatedUser));
+      }),
+      catchError(error => {
+        const errorMessage = error.error?.message || 'Failed to send OTP';
+        this.authState.update(s => ({
+          ...s,
+          error: errorMessage,
+          isLoading: false,
+        }));
+        return throwError(() => error);
+      })
+    );
+  }
+
+  verifyOtp(request: OtpVerifyRequest): Observable<OtpVerifyResponse> {
+    this.authState.update(s => ({ ...s, isLoading: true, error: null }));
+
+    return this.http.post<OtpVerifyResponse>(`${this.apiBase}/auth/verify-otp`, request).pipe(
+      tap(response => {
+        const isVerified = response.verified;
+        const token = response.token;
+        const user = response.user;
+
+        this.authState.update(s => ({
+          ...s,
+          otpVerified: isVerified,
+          isLoading: false,
+        }));
+
+        if (isVerified && token && user) {
+          try {
+            sessionStorage.setItem(AUTH_ACCESS_KEY, token);
+          } catch {
+            /* ignore */
+          }
+          this.authState.update(s => ({
+            ...s,
+            user,
+            token,
+            isAuthenticated: true,
+          }));
+        }
+      }),
+      catchError(error => {
+        const errorMessage = error.error?.message || 'OTP verification failed';
+        this.authState.update(s => ({
+          ...s,
+          error: errorMessage,
+          isLoading: false,
+        }));
+        return throwError(() => error);
+      })
+    );
+  }
+
+  forgotPassword(request: ForgotPasswordRequest): Observable<{ message: string }> {
+    this.authState.update(s => ({ ...s, isLoading: true, error: null }));
+
+    return this.http.post<{ message: string }>(`${this.apiBase}/auth/forgot-password`, request).pipe(
+      tap(() => {
+        this.authState.update(s => ({ ...s, isLoading: false }));
+      }),
+      catchError(error => {
+        const errorMessage = error.error?.message || 'Failed to send reset email';
+        this.authState.update(s => ({
+          ...s,
+          error: errorMessage,
+          isLoading: false,
+        }));
+        return throwError(() => error);
+      })
+    );
+  }
+
+  resetPassword(request: ResetPasswordRequest): Observable<{ message: string }> {
+    this.authState.update(s => ({ ...s, isLoading: true, error: null }));
+
+    return this.http.post<{ message: string }>(`${this.apiBase}/auth/reset-password`, request).pipe(
+      tap(() => {
+        this.authState.update(s => ({ ...s, isLoading: false }));
+      }),
+      catchError(error => {
+        const errorMessage = error.error?.message || 'Password reset failed';
+        this.authState.update(s => ({
+          ...s,
+          error: errorMessage,
+          isLoading: false,
+        }));
+        return throwError(() => error);
+      })
+    );
+  }
+
+  updateProfile(user: Partial<AuthUser>): Observable<AuthUser> {
+    return this.http.put<AuthUser>(`${this.apiBase}/auth/profile`, user).pipe(
+      tap(updatedUser => {
+        this.authState.update(s => ({
+          ...s,
+          user: updatedUser,
+        }));
       }),
       catchError(error => {
         const errorMessage = error.error?.message || 'Failed to update profile';
-        this.authState.update(state => ({
-          ...state,
-          error: errorMessage
+        this.authState.update(s => ({
+          ...s,
+          error: errorMessage,
         }));
         return throwError(() => error);
       })

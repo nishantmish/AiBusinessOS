@@ -132,7 +132,12 @@ public sealed class AuthService(AiBusinessOSDbContext dbContext, IConfiguration 
         {
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new("tenant_id", user.TenantId.ToString()),
-            new(JwtRegisteredClaimNames.Email, user.Email)
+            new(JwtRegisteredClaimNames.Email, user.Email),
+            new(JwtRegisteredClaimNames.GivenName, user.FirstName),
+            new(JwtRegisteredClaimNames.FamilyName, user.LastName ?? string.Empty),
+            new("role", "org_owner"),
+            new("permission", "leads.read"),
+            new("permission", "leads.write")
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt["Key"]!));

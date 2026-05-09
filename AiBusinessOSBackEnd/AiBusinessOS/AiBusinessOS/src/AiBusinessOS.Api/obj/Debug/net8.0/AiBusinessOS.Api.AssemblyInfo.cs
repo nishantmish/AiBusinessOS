@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AiBusinessOS.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6132d04ba1eb3f03a2fe4600612b1f077186a672")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+abe60b9ae020df117235633c03f1a20246602da7")]
 [assembly: System.Reflection.AssemblyProductAttribute("AiBusinessOS.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AiBusinessOS.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
