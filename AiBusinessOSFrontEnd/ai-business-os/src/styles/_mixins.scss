@@ -1,0 +1,293 @@
+/**
+ * SCSS Mixins - Reusable utilities and abstractions
+ */
+
+@use './_tokens.scss' as *;
+
+// ===== TYPOGRAPHY =====
+@mixin font-size($size, $weight: $font-weight-normal) {
+  font-size: $size;
+  font-weight: $weight;
+}
+
+@mixin label-text {
+  @include font-size($font-size-xs, $font-weight-medium);
+  color: var(--color-text-tertiary);
+  letter-spacing: $letter-spacing-wide;
+  text-transform: uppercase;
+}
+
+@mixin body-text {
+  @include font-size($font-size-base);
+  color: var(--color-text);
+  line-height: $line-height-normal;
+}
+
+@mixin secondary-text {
+  @include font-size($font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+// ===== LAYOUT UTILITIES =====
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin flex-col-center {
+  @include flex-col;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin grid-columns($cols, $gap: $spacing-lg) {
+  display: grid;
+  grid-template-columns: repeat($cols, 1fr);
+  gap: $gap;
+}
+
+@mixin absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@mixin absolute-full {
+  position: absolute;
+  inset: 0;
+}
+
+@mixin scrollbar($width: 4px) {
+  &::-webkit-scrollbar {
+    width: $width;
+    height: $width;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border-2);
+    border-radius: $radius-sm;
+
+    &:hover {
+      background: var(--color-border);
+    }
+  }
+}
+
+// ===== BORDERS & SHADOWS =====
+@mixin surface-border {
+  border: 1px solid var(--color-border);
+}
+
+@mixin surface-border-2 {
+  border: 1px solid var(--color-border-2);
+}
+
+@mixin card-style {
+  background: var(--color-surface);
+  @include surface-border;
+  border-radius: $radius-lg;
+  overflow: hidden;
+}
+
+@mixin shadow($size: md) {
+  @if $size == sm {
+    box-shadow: $shadow-sm;
+  } @else if $size == md {
+    box-shadow: $shadow-md;
+  } @else if $size == lg {
+    box-shadow: $shadow-lg;
+  } @else if $size == xl {
+    box-shadow: $shadow-xl;
+  }
+}
+
+// ===== INTERACTION STATES =====
+@mixin hover-state($bg-color: var(--color-surface-2)) {
+  transition: all $transition-fast;
+
+  &:hover {
+    background-color: $bg-color;
+    cursor: pointer;
+  }
+}
+
+@mixin focus-ring {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-glow);
+}
+
+@mixin disabled-state {
+  opacity: 0.5;
+  cursor: not-allowed;
+
+  &:hover,
+  &:focus {
+    background-color: inherit;
+    border-color: inherit;
+  }
+}
+
+@mixin interactive-state {
+  transition: all $transition-base;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--color-surface-2);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    @include disabled-state;
+  }
+}
+
+// ===== TRUNCATION & OVERFLOW =====
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin truncate-lines($lines: 2) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $lines;
+  overflow: hidden;
+}
+
+@mixin scroll-y {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+// ===== RESPONSIVE =====
+@mixin sm {
+  @media (min-width: $breakpoint-sm) {
+    @content;
+  }
+}
+
+@mixin md {
+  @media (min-width: $breakpoint-md) {
+    @content;
+  }
+}
+
+@mixin lg {
+  @media (min-width: $breakpoint-lg) {
+    @content;
+  }
+}
+
+@mixin xl {
+  @media (min-width: $breakpoint-xl) {
+    @content;
+  }
+}
+
+@mixin max-sm {
+  @media (max-width: ($breakpoint-sm - 1px)) {
+    @content;
+  }
+}
+
+@mixin max-md {
+  @media (max-width: ($breakpoint-md - 1px)) {
+    @content;
+  }
+}
+
+@mixin max-lg {
+  @media (max-width: ($breakpoint-lg - 1px)) {
+    @content;
+  }
+}
+
+// ===== ANIMATIONS =====
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(4px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(-4px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@mixin animation-fade-in {
+  animation: fade-in $transition-base;
+}
+
+@mixin animation-slide-up {
+  animation: slide-up $transition-base;
+}
+
+@mixin animation-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

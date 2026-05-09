@@ -1,0 +1,183 @@
+/**
+ * Themes - CSS Variables for runtime theme switching
+ * Supports: light, dark, dim themes
+ */
+
+@use './_tokens.scss' as *;
+
+// ===== DEFAULT DARK THEME =====
+:root {
+  color-scheme: dark;
+  --color-bg: #{$color-dark-bg};
+  --color-surface: #{$color-dark-surface};
+  --color-surface-2: #{$color-dark-surface-2};
+  --color-surface-3: #{$color-dark-surface-3};
+  --color-text: #{$color-dark-text};
+  --color-text-secondary: #{$color-dark-text-secondary};
+  --color-text-tertiary: #{$color-dark-text-tertiary};
+  --color-border: #{$color-dark-border};
+  --color-border-2: #{$color-dark-border-2};
+
+  --color-primary: #{$color-primary};
+  --color-primary-light: #{$color-primary-light};
+  --color-success: #{$color-success};
+  --color-warning: #{$color-warning};
+  --color-error: #{$color-error};
+  --color-info: #{$color-info};
+
+  // Legacy variable names (for backward compatibility)
+  --bg: #{$color-dark-bg};
+  --surface: #{$color-dark-surface};
+  --surface2: #{$color-dark-surface-2};
+  --border: #{$color-dark-border};
+  --border2: #{$color-dark-border-2};
+  --text: #{$color-dark-text};
+  --text2: #{$color-dark-text-secondary};
+  --text3: #{$color-dark-text-tertiary};
+  --accent: #{$color-primary};
+  --accent2: #{$color-primary-light};
+  --accent-glow: #{$color-primary-glow};
+  --green: #{$color-success};
+  --green-dim: #{$color-success-light};
+  --amber: #{$color-warning};
+  --amber-dim: #{$color-warning-light};
+  --red: #{$color-error};
+  --red-dim: #{$color-error-light};
+  --cyan: #{$color-info};
+  --cyan-dim: #{$color-info-light};
+
+  --font: #{$font-family-base};
+  --mono: #{$font-family-mono};
+  --r: #{$radius-md};
+  --r-lg: #{$radius-lg};
+  --sidebar-w: #{$sidebar-width};
+}
+
+// ===== LIGHT THEME =====
+html[data-theme="light"] {
+  color-scheme: light;
+  --color-bg: #{$color-light-bg};
+  --color-surface: #{$color-light-surface};
+  --color-surface-2: #{$color-light-surface-2};
+  --color-surface-3: #{$color-light-surface-3};
+  --color-text: #{$color-light-text};
+  --color-text-secondary: #{$color-light-text-secondary};
+  --color-text-tertiary: #{$color-light-text-tertiary};
+  --color-border: #{$color-light-border};
+  --color-border-2: #{$color-light-border-2};
+
+  --color-primary: #{$color-primary};
+  --color-primary-light: #{$color-primary-light};
+  --color-success: #{$color-success};
+  --color-warning: #{$color-warning};
+  --color-error: #{$color-error};
+  --color-info: #{$color-info};
+
+  // Legacy names
+  --bg: #{$color-light-bg};
+  --surface: #{$color-light-surface};
+  --surface2: #{$color-light-surface-2};
+  --border: #{$color-light-border};
+  --border2: #{$color-light-border-2};
+  --text: #{$color-light-text};
+  --text2: #{$color-light-text-secondary};
+  --text3: #{$color-light-text-tertiary};
+  --accent: #{$color-primary};
+  --accent2: #{$color-primary-light};
+  --accent-glow: #{$color-primary-glow};
+  --green: #{$color-success};
+  --green-dim: #{$color-success-light};
+  --amber: #{$color-warning};
+  --amber-dim: #{$color-warning-light};
+  --red: #{$color-error};
+  --red-dim: #{$color-error-light};
+  --cyan: #{$color-info};
+  --cyan-dim: #{$color-info-light};
+}
+
+// ===== DIM THEME (GitHub-inspired) =====
+html[data-theme="dim"] {
+  color-scheme: dark;
+  --color-bg: #{$color-dim-bg};
+  --color-surface: #{$color-dim-surface};
+  --color-surface-2: #{$color-dim-surface-2};
+  --color-surface-3: #{$color-dim-surface-3};
+  --color-text: #{$color-dim-text};
+  --color-text-secondary: #{$color-dim-text-secondary};
+  --color-text-tertiary: #{$color-dim-text-tertiary};
+  --color-border: #{$color-dim-border};
+  --color-border-2: #{$color-dim-border-2};
+
+  --color-primary: #{$color-primary};
+  --color-primary-light: #{$color-primary-light};
+  --color-success: #{$color-success};
+  --color-warning: #{$color-warning};
+  --color-error: #{$color-error};
+  --color-info: #{$color-info};
+
+  // Legacy names
+  --bg: #{$color-dim-bg};
+  --surface: #{$color-dim-surface};
+  --surface2: #{$color-dim-surface-2};
+  --border: #{$color-dim-border};
+  --border2: #{$color-dim-border-2};
+  --text: #{$color-dim-text};
+  --text2: #{$color-dim-text-secondary};
+  --text3: #{$color-dim-text-tertiary};
+  --accent: #{$color-primary};
+  --accent2: #{$color-primary-light};
+  --accent-glow: #{$color-primary-glow};
+  --green: #{$color-success};
+  --green-dim: #{$color-success-light};
+  --amber: #{$color-warning};
+  --amber-dim: #{$color-warning-light};
+  --red: #{$color-error};
+  --red-dim: #{$color-error-light};
+  --cyan: #{$color-info};
+  --cyan-dim: #{$color-info-light};
+}
+
+// ===== PREFERS-COLOR-SCHEME FALLBACK =====
+@media (prefers-color-scheme: light) {
+  html:not([data-theme]) {
+    color-scheme: light;
+    --color-bg: #{$color-light-bg};
+    --color-surface: #{$color-light-surface};
+    --color-surface-2: #{$color-light-surface-2};
+    --color-surface-3: #{$color-light-surface-3};
+    --color-text: #{$color-light-text};
+    --color-text-secondary: #{$color-light-text-secondary};
+    --color-text-tertiary: #{$color-light-text-tertiary};
+    --color-border: #{$color-light-border};
+    --color-border-2: #{$color-light-border-2};
+    --color-primary: #{$color-primary};
+    --color-primary-light: #{$color-primary-light};
+    --color-success: #{$color-success};
+    --color-warning: #{$color-warning};
+    --color-error: #{$color-error};
+    --color-info: #{$color-info};
+
+    // Legacy
+    --bg: #{$color-light-bg};
+    --surface: #{$color-light-surface};
+    --surface2: #{$color-light-surface-2};
+    --border: #{$color-light-border};
+    --border2: #{$color-light-border-2};
+    --text: #{$color-light-text};
+    --text2: #{$color-light-text-secondary};
+    --text3: #{$color-light-text-tertiary};
+    --accent: #{$color-primary};
+    --accent2: #{$color-primary-light};
+    --green: #{$color-success};
+    --amber: #{$color-warning};
+    --red: #{$color-error};
+    --cyan: #{$color-info};
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) {
+    color-scheme: dark;
+    // Uses :root default theme already
+  }
+}

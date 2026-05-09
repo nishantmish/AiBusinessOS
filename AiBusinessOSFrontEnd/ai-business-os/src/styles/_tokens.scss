@@ -1,0 +1,125 @@
+/**
+ * Design Tokens - Single source of truth for all design values
+ * Organized by category for easy maintenance
+ */
+
+// ===== TYPOGRAPHY =====
+$font-family-base: 'DM Sans', sans-serif;
+$font-family-mono: 'DM Mono', monospace;
+
+$font-size-xs: 10px;
+$font-size-sm: 11px;
+$font-size-base: 14px;
+$font-size-lg: 15px;
+$font-size-xl: 18px;
+$font-size-2xl: 24px;
+
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+$line-height-tight: 1.2;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.7;
+
+$letter-spacing-tight: -0.4px;
+$letter-spacing-normal: 0px;
+$letter-spacing-wide: 0.5px;
+
+// ===== SPACING =====
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 24px;
+$spacing-2xl: 32px;
+$spacing-3xl: 48px;
+
+// ===== BORDER RADIUS =====
+$radius-sm: 6px;
+$radius-md: 10px;
+$radius-lg: 14px;
+$radius-xl: 16px;
+
+// ===== COLORS - LIGHT THEME =====
+$color-light-bg: #ffffff;
+$color-light-surface: #f8f9fa;
+$color-light-surface-2: #f0f2f5;
+$color-light-surface-3: #e9ecef;
+$color-light-text: #1a1a1a;
+$color-light-text-secondary: #666666;
+$color-light-text-tertiary: #999999;
+$color-light-border: rgba(0, 0, 0, 0.08);
+$color-light-border-2: rgba(0, 0, 0, 0.12);
+
+// ===== COLORS - DARK THEME =====
+$color-dark-bg: #0d0f14;
+$color-dark-surface: #13161d;
+$color-dark-surface-2: #1a1e28;
+$color-dark-surface-3: #232836;
+$color-dark-text: #e8eaf0;
+$color-dark-text-secondary: #8b90a0;
+$color-dark-text-tertiary: #555b6e;
+$color-dark-border: rgba(255, 255, 255, 0.07);
+$color-dark-border-2: rgba(255, 255, 255, 0.12);
+
+// ===== COLORS - DIM THEME =====
+$color-dim-bg: #0f1117;
+$color-dim-surface: #161b22;
+$color-dim-surface-2: #21262d;
+$color-dim-surface-3: #30363d;
+$color-dim-text: #c9d1d9;
+$color-dim-text-secondary: #8b949e;
+$color-dim-text-tertiary: #6e7681;
+$color-dim-border: rgba(240, 246, 252, 0.1);
+$color-dim-border-2: rgba(240, 246, 252, 0.15);
+
+// ===== SEMANTIC COLORS (all themes) =====
+$color-primary: #6366f1;
+$color-primary-light: #818cf8;
+$color-primary-glow: rgba(99, 102, 241, 0.15);
+
+$color-success: #22c55e;
+$color-success-light: rgba(34, 197, 94, 0.12);
+
+$color-warning: #f59e0b;
+$color-warning-light: rgba(245, 158, 11, 0.12);
+
+$color-error: #ef4444;
+$color-error-light: rgba(239, 68, 68, 0.1);
+
+$color-info: #06b6d4;
+$color-info-light: rgba(6, 182, 212, 0.1);
+
+// ===== TRANSITIONS =====
+$transition-fast: 150ms ease;
+$transition-base: 200ms ease;
+$transition-slow: 300ms ease;
+
+// ===== SHADOWS =====
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+$shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.2);
+
+// ===== BREAKPOINTS =====
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+$breakpoint-2xl: 1536px;
+
+// ===== Z-INDEX SCALE =====
+$z-dropdown: 100;
+$z-sticky: 50;
+$z-fixed: 200;
+$z-modal-backdrop: 999;
+$z-modal: 1000;
+$z-tooltip: 1100;
+$z-notification: 1200;
+
+// ===== LAYOUT =====
+$sidebar-width: 220px;
+$sidebar-width-collapsed: 54px;
+$topbar-height: 54px;

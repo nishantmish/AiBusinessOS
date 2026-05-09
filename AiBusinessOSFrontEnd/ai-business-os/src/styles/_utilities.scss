@@ -1,0 +1,319 @@
+/**
+ * Global Utilities - Custom utilities beyond Tailwind
+ */
+
+@use './_tokens.scss' as *;
+@use './_mixins.scss' as *;
+
+// ===== FLEX UTILITIES =====
+.flex-center {
+  @include flex-center;
+}
+
+.flex-between {
+  @include flex-between;
+}
+
+.flex-col {
+  @include flex-col;
+}
+
+.flex-col-center {
+  @include flex-col-center;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.gap-xs {
+  gap: $spacing-xs;
+}
+
+.gap-sm {
+  gap: $spacing-sm;
+}
+
+.gap-md {
+  gap: $spacing-md;
+}
+
+.gap-lg {
+  gap: $spacing-lg;
+}
+
+// ===== GRID UTILITIES =====
+.grid-2 {
+  @include grid-columns(2);
+}
+
+.grid-3 {
+  @include grid-columns(3);
+}
+
+.grid-4 {
+  @include grid-columns(4);
+}
+
+.grid-3-1 {
+  @include grid-columns(2);
+
+  @include md {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.grid-1-2 {
+  @include grid-columns(1);
+
+  @include md {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+// ===== TEXT UTILITIES =====
+.text-xs {
+  @include font-size($font-size-xs);
+}
+
+.text-sm {
+  @include font-size($font-size-sm);
+}
+
+.text-base {
+  @include font-size($font-size-base);
+}
+
+.text-lg {
+  @include font-size($font-size-lg);
+}
+
+.text-xl {
+  @include font-size($font-size-xl);
+}
+
+.text-2xl {
+  @include font-size($font-size-2xl);
+}
+
+.text-semibold {
+  font-weight: $font-weight-semibold;
+}
+
+.text-bold {
+  font-weight: $font-weight-bold;
+}
+
+.text-medium {
+  font-weight: $font-weight-medium;
+}
+
+.text-mono {
+  font-family: $font-family-mono;
+}
+
+.text-primary {
+  color: var(--color-text);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-tertiary {
+  color: var(--color-text-tertiary);
+}
+
+.text-success {
+  color: var(--color-success);
+}
+
+.text-warning {
+  color: var(--color-warning);
+}
+
+.text-error {
+  color: var(--color-error);
+}
+
+.text-info {
+  color: var(--color-info);
+}
+
+.text-accent {
+  color: var(--color-primary-light);
+}
+
+// ===== BACKGROUND UTILITIES =====
+.bg-primary {
+  background-color: var(--color-surface);
+}
+
+.bg-secondary {
+  background-color: var(--color-surface-2);
+}
+
+.bg-tertiary {
+  background-color: var(--color-surface-3);
+}
+
+.bg-success {
+  background-color: var(--color-success-light);
+}
+
+.bg-warning {
+  background-color: var(--color-warning-light);
+}
+
+.bg-error {
+  background-color: var(--color-error-light);
+}
+
+.bg-info {
+  background-color: var(--color-info-light);
+}
+
+// ===== BORDER UTILITIES =====
+.border-base {
+  @include surface-border;
+}
+
+.border-2 {
+  @include surface-border-2;
+}
+
+.border-l {
+  border-left: 1px solid var(--color-border);
+}
+
+.border-r {
+  border-right: 1px solid var(--color-border);
+}
+
+.border-t {
+  border-top: 1px solid var(--color-border);
+}
+
+.border-b {
+  border-bottom: 1px solid var(--color-border);
+}
+
+// ===== SPACING UTILITIES =====
+.p-xs {
+  padding: $spacing-xs;
+}
+
+.p-sm {
+  padding: $spacing-sm;
+}
+
+.p-md {
+  padding: $spacing-md;
+}
+
+.p-lg {
+  padding: $spacing-lg;
+}
+
+.px-sm {
+  padding-left: $spacing-sm;
+  padding-right: $spacing-sm;
+}
+
+.px-md {
+  padding-left: $spacing-md;
+  padding-right: $spacing-md;
+}
+
+.px-lg {
+  padding-left: $spacing-lg;
+  padding-right: $spacing-lg;
+}
+
+.py-sm {
+  padding-top: $spacing-sm;
+  padding-bottom: $spacing-sm;
+}
+
+.py-md {
+  padding-top: $spacing-md;
+  padding-bottom: $spacing-md;
+}
+
+.py-lg {
+  padding-top: $spacing-lg;
+  padding-bottom: $spacing-lg;
+}
+
+// ===== TRUNCATION =====
+.truncate {
+  @include truncate;
+}
+
+.truncate-1 {
+  @include truncate-lines(1);
+}
+
+.truncate-2 {
+  @include truncate-lines(2);
+}
+
+.truncate-3 {
+  @include truncate-lines(3);
+}
+
+// ===== DISPLAY =====
+.hidden {
+  display: none !important;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.block {
+  display: block;
+}
+
+// ===== CURSOR =====
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-default {
+  cursor: default;
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+// ===== OPACITY =====
+.opacity-50 {
+  opacity: 0.5;
+}
+
+.opacity-75 {
+  opacity: 0.75;
+}
+
+// ===== TRANSITIONS =====
+.transition-fast {
+  transition: all $transition-fast;
+}
+
+.transition-base {
+  transition: all $transition-base;
+}
+
+.transition-slow {
+  transition: all $transition-slow;
+}
