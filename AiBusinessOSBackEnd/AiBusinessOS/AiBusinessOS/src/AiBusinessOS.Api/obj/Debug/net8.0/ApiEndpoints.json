@@ -1,0 +1,148 @@
+[
+  {
+    "ContainingType": "AiBusinessOS.Api.Controllers.V1.AuthController",
+    "Method": "Login",
+    "RelativePath": "api/v{version}/auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "AiBusinessOS.Application.Auth.Dtos.LoginRequest",
+        "IsRequired": true
+      },
+      {
+        "Name": "version",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AiBusinessOS.Api.Controllers.V1.AuthController",
+    "Method": "Refresh",
+    "RelativePath": "api/v{version}/auth/refresh",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "AiBusinessOS.Application.Auth.Dtos.RefreshRequest",
+        "IsRequired": true
+      },
+      {
+        "Name": "version",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AiBusinessOS.Api.Controllers.V1.AuthController",
+    "Method": "Revoke",
+    "RelativePath": "api/v{version}/auth/revoke",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "AiBusinessOS.Application.Auth.Dtos.RevokeRequest",
+        "IsRequired": true
+      },
+      {
+        "Name": "version",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AiBusinessOS.Api.Controllers.V1.LeadsController",
+    "Method": "GetLeads",
+    "RelativePath": "api/v{version}/leads",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "status",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "version",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AiBusinessOS.Api.Controllers.V1.LeadsController",
+    "Method": "CreateLead",
+    "RelativePath": "api/v{version}/leads",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "AiBusinessOS.Application.Leads.Commands.CreateLead.CreateLeadCommand",
+        "IsRequired": true
+      },
+      {
+        "Name": "version",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AiBusinessOS.Api.Controllers.V1.WebhooksController",
+    "Method": "Ingest",
+    "RelativePath": "api/v{version}/webhooks/ingest",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "payload",
+        "Type": "System.Object",
+        "IsRequired": true
+      },
+      {
+        "Name": "X-Webhook-Signature",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "version",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

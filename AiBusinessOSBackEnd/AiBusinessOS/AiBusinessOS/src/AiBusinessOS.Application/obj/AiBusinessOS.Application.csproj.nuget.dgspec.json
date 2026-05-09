@@ -1,0 +1,239 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Cursur AI Projects\\GIT Project\\AiBusinessOS\\AiBusinessOSBackEnd\\AiBusinessOS\\AiBusinessOS\\src\\AiBusinessOS.Application\\AiBusinessOS.Application.csproj": {}
+  },
+  "projects": {
+    "C:\\Cursur AI Projects\\GIT Project\\AiBusinessOS\\AiBusinessOSBackEnd\\AiBusinessOS\\AiBusinessOS\\src\\AiBusinessOS.Application\\AiBusinessOS.Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Cursur AI Projects\\GIT Project\\AiBusinessOS\\AiBusinessOSBackEnd\\AiBusinessOS\\AiBusinessOS\\src\\AiBusinessOS.Application\\AiBusinessOS.Application.csproj",
+        "projectName": "AiBusinessOS.Application",
+        "projectPath": "C:\\Cursur AI Projects\\GIT Project\\AiBusinessOS\\AiBusinessOSBackEnd\\AiBusinessOS\\AiBusinessOS\\src\\AiBusinessOS.Application\\AiBusinessOS.Application.csproj",
+        "packagesPath": "C:\\Users\\nishantMishra\\.nuget\\packages\\",
+        "outputPath": "C:\\Cursur AI Projects\\GIT Project\\AiBusinessOS\\AiBusinessOSBackEnd\\AiBusinessOS\\AiBusinessOS\\src\\AiBusinessOS.Application\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\nishantMishra\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Cursur AI Projects\\GIT Project\\AiBusinessOS\\AiBusinessOSBackEnd\\AiBusinessOS\\AiBusinessOS\\src\\AiBusinessOS.Domain\\AiBusinessOS.Domain.csproj": {
+                "projectPath": "C:\\Cursur AI Projects\\GIT Project\\AiBusinessOS\\AiBusinessOSBackEnd\\AiBusinessOS\\AiBusinessOS\\src\\AiBusinessOS.Domain\\AiBusinessOS.Domain.csproj"
+              },
+              "C:\\Cursur AI Projects\\GIT Project\\AiBusinessOS\\AiBusinessOSBackEnd\\AiBusinessOS\\AiBusinessOS\\src\\AiBusinessOS.Shared\\AiBusinessOS.Shared.csproj": {
+                "projectPath": "C:\\Cursur AI Projects\\GIT Project\\AiBusinessOS\\AiBusinessOSBackEnd\\AiBusinessOS\\AiBusinessOS\\src\\AiBusinessOS.Shared\\AiBusinessOS.Shared.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            },
+            "FluentValidation": {
+              "target": "Package",
+              "version": "[12.1.1, )"
+            },
+            "FluentValidation.DependencyInjectionExtensions": {
+              "target": "Package",
+              "version": "[12.1.1, )"
+            },
+            "MediatR": {
+              "target": "Package",
+              "version": "[14.1.0, )"
+            },
+            "Microsoft.Extensions.DependencyInjection.Abstractions": {
+              "target": "Package",
+              "version": "[10.0.7, )"
+            },
+            "Microsoft.Extensions.Logging.Abstractions": {
+              "target": "Package",
+              "version": "[10.0.7, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.308/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Cursur AI Projects\\GIT Project\\AiBusinessOS\\AiBusinessOSBackEnd\\AiBusinessOS\\AiBusinessOS\\src\\AiBusinessOS.Domain\\AiBusinessOS.Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Cursur AI Projects\\GIT Project\\AiBusinessOS\\AiBusinessOSBackEnd\\AiBusinessOS\\AiBusinessOS\\src\\AiBusinessOS.Domain\\AiBusinessOS.Domain.csproj",
+        "projectName": "AiBusinessOS.Domain",
+        "projectPath": "C:\\Cursur AI Projects\\GIT Project\\AiBusinessOS\\AiBusinessOSBackEnd\\AiBusinessOS\\AiBusinessOS\\src\\AiBusinessOS.Domain\\AiBusinessOS.Domain.csproj",
+        "packagesPath": "C:\\Users\\nishantMishra\\.nuget\\packages\\",
+        "outputPath": "C:\\Cursur AI Projects\\GIT Project\\AiBusinessOS\\AiBusinessOSBackEnd\\AiBusinessOS\\AiBusinessOS\\src\\AiBusinessOS.Domain\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\nishantMishra\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.308/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Cursur AI Projects\\GIT Project\\AiBusinessOS\\AiBusinessOSBackEnd\\AiBusinessOS\\AiBusinessOS\\src\\AiBusinessOS.Shared\\AiBusinessOS.Shared.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Cursur AI Projects\\GIT Project\\AiBusinessOS\\AiBusinessOSBackEnd\\AiBusinessOS\\AiBusinessOS\\src\\AiBusinessOS.Shared\\AiBusinessOS.Shared.csproj",
+        "projectName": "AiBusinessOS.Shared",
+        "projectPath": "C:\\Cursur AI Projects\\GIT Project\\AiBusinessOS\\AiBusinessOSBackEnd\\AiBusinessOS\\AiBusinessOS\\src\\AiBusinessOS.Shared\\AiBusinessOS.Shared.csproj",
+        "packagesPath": "C:\\Users\\nishantMishra\\.nuget\\packages\\",
+        "outputPath": "C:\\Cursur AI Projects\\GIT Project\\AiBusinessOS\\AiBusinessOSBackEnd\\AiBusinessOS\\AiBusinessOS\\src\\AiBusinessOS.Shared\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\nishantMishra\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.308/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
