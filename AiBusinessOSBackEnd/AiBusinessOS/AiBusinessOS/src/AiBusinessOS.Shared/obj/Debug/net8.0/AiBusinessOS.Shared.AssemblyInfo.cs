@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AiBusinessOS.Shared")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fa7367e85b63453cd5409f9e50af5c4af88753ae")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6132d04ba1eb3f03a2fe4600612b1f077186a672")]
 [assembly: System.Reflection.AssemblyProductAttribute("AiBusinessOS.Shared")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AiBusinessOS.Shared")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
